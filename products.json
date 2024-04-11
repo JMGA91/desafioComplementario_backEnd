@@ -1,0 +1,112 @@
+[
+  {
+    "id": 1,
+    "title": "Café",
+    "description": "Café importado de Colombia",
+    "code": "COFFEE398",
+    "price": "1290",
+    "status": true,
+    "stock": "43",
+    "category": "Comestibles",
+    "thumbnails": []
+  },
+  {
+    "id": 2,
+    "title": "Chocolate",
+    "description": "Chocolate semi-amargo",
+    "code": "CHOCOLATE698",
+    "price": "800",
+    "status": true,
+    "stock": "150",
+    "category": "Comestibles",
+    "thumbnails": []
+  },
+  {
+    "id": 3,
+    "title": "Azúcar",
+    "description": "Azúcar de caña",
+    "code": "SUGAR123",
+    "price": "1200",
+    "status": true,
+    "stock": "200",
+    "category": "Comestibles",
+    "thumbnails": []
+  },
+  {
+    "id": 4,
+    "title": "Leche",
+    "description": "Leche desnatada",
+    "code": "MILK001",
+    "price": "900",
+    "status": true,
+    "stock": "120",
+    "category": "Lácteos",
+    "thumbnails": []
+  },
+  {
+    "id": 5,
+    "title": "Pan",
+    "description": "Pan integral",
+    "code": "BREAD007",
+    "price": "1100",
+    "status": true,
+    "stock": "80",
+    "category": "Panadería",
+    "thumbnails": []
+  },
+  {
+    "id": 6,
+    "title": "Queso",
+    "description": "Queso fresco",
+    "code": "CHEESE202",
+    "price": "1500",
+    "status": true,
+    "stock": "90",
+    "category": "Lácteos",
+    "thumbnails": []
+  },
+  {
+    "id": 7,
+    "title": "Huevos",
+    "description": "Huevos de gallina",
+    "code": "EGGS999",
+    "price": "1600",
+    "status": true,
+    "stock": "100",
+    "category": "Huevos",
+    "thumbnails": []
+  },
+  {
+    "id": 8,
+    "title": "Yogur",
+    "description": "Yogur natural",
+    "code": "YOGURT123",
+    "price": "700",
+    "status": true,
+    "stock": "200",
+    "category": "Lácteos",
+    "thumbnails": []
+  },
+  {
+    "id": 9,
+    "title": "Arroz",
+    "description": "Arroz blanco",
+    "code": "RICE456",
+    "price": "850",
+    "status": true,
+    "stock": "150",
+    "category": "Cereales",
+    "thumbnails": []
+  },
+  {
+    "id": 10,
+    "title": "Aceite",
+    "description": "Aceite de oliva virgen extra",
+    "code": "OIL789",
+    "price": "2000",
+    "status": true,
+    "stock": "50",
+    "category": "Aceites",
+    "thumbnails": []
+  }
+]
