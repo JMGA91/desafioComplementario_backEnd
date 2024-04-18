@@ -1,0 +1,33 @@
+<div class="cart">
+  <div class="cart-header">
+    <h2 class="cart-title">Your Cart</h2>
+  </div>
+  <div class="cart-items">
+    {{#each products}}
+      <div class="cart-item">
+        <div class="item-image">
+          <img src="{{this.product.image}}" alt="{{this.product.name}}" />
+        </div>
+        <div class="item-details">
+          <h3 class="item-name">{{this.product.name}}</h3>
+          <p class="item-description">{{this.product.description}}</p>
+          <p class="item-price">${{this.product.price}}</p>
+          <p class="item-quantity">Quantity: {{this.quantity}}</p>
+        </div>
+        <div class="item-actions">
+          <button class="remove-item">Remove</button>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+  <div class="cart-total">
+    <p>Total: ${{totalPrice}}</p>
+  </div>
+  <div class="cart-actions">
+    <button class="checkout-btn">Checkout</button>
+    <button class="clear-cart-btn">Clear Cart</button>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/cart.js"></script>

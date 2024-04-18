@@ -1,7 +1,7 @@
 <div class="box">
   <h1>Productos</h1>
   <div class="products-box">
-    {{#each products}}
+    {{#each products.docs}}
       <div class="product-card">
         <h3>{{this.title}}</h3>
         <hr />
@@ -11,4 +11,20 @@
       </div>
     {{/each}}
   </div>
+        <div class="paginate">
+  {{#if products.prevPage}}
+  <a href="/products?page={{products.prevPage}}" class="prev">
+    previous
+  </a>
+  {{/if}}
+
+  {{#if products.nextPage}}
+  <a href="/products?page={{products.nextPage}}" class="next">
+    next
+  </a>
+  {{/if}}
 </div>
+
+<script>
+  console.log(products)
+</script>

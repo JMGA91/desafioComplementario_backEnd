@@ -1,10 +1,15 @@
 import productModel from "./models/productModel.js";
 
 class productManagerDB {
-  
-  async getAllProducts() {
+  async getAllProducts(limit, page, query, sort) {
     try {
-      return await productModel.find().lean();
+
+      return await productModel.paginate(query ?? {}, {
+        page: page ?? 1,
+        limit: limit ?? 100,
+        sort,
+        lean: true,
+      });
     } catch (error) {
       console.error(error.message);
       throw new Error("Error al buscar los productos");
@@ -12,6 +17,7 @@ class productManagerDB {
   }
 
   async getProductByID(pid) {
+
     const product = await productModel.findOne({ _id: pid });
 
     if (!product) throw new Error(`El producto ${pid} no existe!`);

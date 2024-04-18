@@ -8,7 +8,7 @@ let submitBtn = document.querySelector("#submitBtn");
 function identifyUser() {
   user = document.querySelector("#usernameInput").value.trim();
   if (!user) {
-    alert("You need to identify yourself to continue!");
+    alert("You need to identify to continue!");
     return;
   }
   console.log(`Your username is ${user}`);
