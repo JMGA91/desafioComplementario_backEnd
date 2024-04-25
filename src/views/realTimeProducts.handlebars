@@ -28,8 +28,10 @@
 
   <hr />
 
+  <p>{{products.pagingCounter}}</p>
+
   <div class="products-box">
-    {{#each products}}
+    {{#each products.docs}}
       <div class="product-card">
         <h3>{{this.title}}</h3>
         <hr />

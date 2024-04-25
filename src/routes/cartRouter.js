@@ -1,8 +1,10 @@
 import { Router } from "express";
 import cartManagerDB from "../dao/cartManagerDB.js";
+import userManagerDB from "../dao/userManagerDB.js";
 
 const router = Router();
 const CartService = new cartManagerDB();
+const userService = new userManagerDB();
 
 router.get("/:cid", async (req, res) => {
   try {
@@ -35,6 +37,18 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.post("/register", async (req, res) => {
+  const user = req.body;
+  try {
+    const response = await userService.registerUser(user);
+    const cart = await cartService.createCart();
+    await userService.updateUser(response._id, { cart: cart._id });
+    res.redirect("/user");
+  } catch (error) {
+    res.redirect("/register");
+  }
+});
+
 router.get("/", async (req, res) => {
   try {
     const carts = await CartService.getAllCarts();
@@ -60,12 +74,10 @@ router.post("/:cid/products/:pid", async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res
-      .status(400)
-      .send({
-        status: "error",
-        error: "There was an error adding the product to the cart",
-      });
+    res.status(400).send({
+      status: "error",
+      error: "There was an error adding the product to the cart",
+    });
   }
 });
 
@@ -89,12 +101,10 @@ router.put("/:cid/products/:pid", async (req, res) => {
     res.send({ status: "success", message: "Quantity changed" });
   } catch (error) {
     console.error(error);
-    res
-      .status(400)
-      .send({
-        status: "error",
-        error: "There was an error updating the product quantity",
-      });
+    res.status(400).send({
+      status: "error",
+      error: "There was an error updating the product quantity",
+    });
   }
 });
 
@@ -119,12 +129,10 @@ router.delete("/:cid/products/:pid", async (req, res) => {
     res.send(`Product ${productId} has been deleted from the cart`);
   } catch (error) {
     console.error(error);
-    res
-      .status(400)
-      .send({
-        status: "error",
-        error: "There was an error deleting the product from the cart",
-      });
+    res.status(400).send({
+      status: "error",
+      error: "There was an error deleting the product from the cart",
+    });
   }
 });
 

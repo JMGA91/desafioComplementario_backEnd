@@ -1,0 +1,37 @@
+<div class="container">
+
+  <nav>
+    <ul class="nav_list">
+      <li class="nav__item">
+        <a class="nav_link" href="/products/">Classes</a>
+      </li>
+      <li class="nav__item">
+        <a class="nav_link" href="/realtimeproducts">Post</a>
+      </li>
+      <li class="nav__item">
+        <a class="nav_link" href="/chat">Help</a>
+      </li>
+      <li class="nav__item">
+        <a class="nav_link" href="/cart">Cart</a>
+      </li>
+      <li class="nav__item">
+        <a class="nav_link" href="/api/session/logout">Logout</a>
+      </li>
+    </ul>
+  </nav>
+  <div class="box">
+    <img
+      src="https://static-00.iconduck.com/assets.00/user-icon-1024x1024-dtzturco.png"
+      alt="User Image"
+      class="user-image"
+    />
+    <div class="user-details">
+      <h1>{{user.firstName}} {{user.lastName}}</h1>
+      <p>Email: {{user.email}}</p>
+      <div class="additional-info">
+        <h2>Age: {{user.age}}</h2>
+        <h2>Role: {{user.role}}</h2>
+      </div>
+    </div>
+  </div>
+</div>

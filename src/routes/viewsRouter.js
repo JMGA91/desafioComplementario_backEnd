@@ -2,15 +2,63 @@ import { Router } from "express";
 import { productManagerDB } from "../dao/productManagerDB.js";
 import messageManagerDB from "../dao/messageManagerDB.js";
 import cartManagerDB from "../dao/cartManagerDB.js";
+import { auth } from "../middlewares/auth.js";
+import { userModel } from "../dao/models/userModel.js";
 
 const router = Router();
 const productService = new productManagerDB();
 const cartService = new cartManagerDB();
 
-router.get("/", async (req, res) => {
-  let { limit = 3, page = 1 } = req.query;
+router.get("/", (req, res) => {
+  res.render("home", {
+    title: "FlameShop | Home",
+    style: "index.css",
+  });
+});
 
-  res.render("index", {
+router.get("/login", async (req, res) => {
+  if (req.session.user) {
+    res.redirect("/user");
+  } else {
+    res.render("login", {
+      title: "FlameShop | Login",
+      style: "index.css",
+      failLogin: req.session.failLogin ?? false,
+    });
+  }
+});
+
+router.get("/register", (req, res) => {
+  if (req.session.user) {
+    res.redirect("/user");
+  }
+  res.render("register", {
+    title: "FlameShop | Register",
+    style: "index.css",
+    failRegister: req.session.failRegister ?? false,
+  });
+});
+
+router.get("/user", auth, async (req, res) => {
+  try {
+    const userId = req.session.user._id;
+    const user = await userModel.findById(userId).populate("cart").lean();
+    res.render("user", {
+      title: "FlameShop | Usuario",
+      style: "index.css",
+      user: req.session.user,
+      cart: user.cart?.products || [],
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+router.get("/products", async (req, res) => {
+  let { limit = 5, page = 1 } = req.query;
+
+  res.render("products", {
     title: "Productos",
     style: "index.css",
     products: await productService.getAllProducts(limit, page),
@@ -39,18 +87,19 @@ router.get("/chat", async (req, res) => {
   }
 });
 
-router.get("/:cid", async (req, res) => {
+router.get("/cart", auth, async (req, res) => {
   const cartId = req.params.cid;
   try {
     const cart = await cartService.getProductsFromCartByID(cartId);
     res.render("cart", {
-      title: "Cart",
+      title: "FlameShop Cart",
       style: "index.css",
+      cartId: cartId,
       products: cart.products,
+      user: req.user,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal Server Error");
   }
 });
 

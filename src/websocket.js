@@ -1,5 +1,10 @@
 import { productManagerDB } from "./dao/productManagerDB.js";
+import userManagerDB from "./dao/userManagerDB.js";
+import cartManagerDB from "./dao/cartManagerDB.js";
+
+const UserManager = new userManagerDB();
 const ProductService = new productManagerDB();
+const CartManager = new cartManagerDB();
 
 export default (io) => {
   io.on("connection", (socket) => {
@@ -41,6 +46,53 @@ export default (io) => {
       } catch (error) {
         console.error("Error handling user connection:", error.message);
       }
+    });
+
+    socket.on("registerUser", async (userData) => {
+      try {
+        await UserManager.registerUser(userData);
+        socket.emit("registrationSuccess", "User registered successfully!");
+      } catch (error) {
+        socket.emit("registrationError", error.message);
+      }
+    });
+
+    socket.on("loginUser", async (loginData) => {
+      try {
+        const user = await UserManager.authenticateUser(loginData);
+        socket.emit("loginSuccess", user);
+      } catch (error) {
+        socket.emit("loginError", error.message);
+      }
+    });
+
+    socket.on("logoutUser", async () => {
+      try {
+        // Handle logout logic
+      } catch (error) {
+        // Handle errors
+      }
+    });
+
+    socket.on("addProductToCart", async (data) => {
+      try {
+        const { cartId, productId, quantity } = data;
+        const cart = await CartManager.addProductToCart(
+          cartId,
+          productId,
+          quantity
+        );
+        // Emit event to update client-side cart
+        io.emit("cartUpdated", cart);
+      } catch (error) {
+        // Handle errors
+        console.error(error.message);
+        socket.emit("cartError", error.message);
+      }
+    });
+
+    socket.on("disconnect", () => {
+      console.log(`Client disconnected: ${socket.id}`);
     });
   });
 };

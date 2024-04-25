@@ -7,16 +7,17 @@ import { Server } from "socket.io";
 import __dirname from "./utils/constantsUtil.js";
 import websocket from "./websocket.js";
 import mongoose from "mongoose";
-import messagemanagerdb from "./dao/messageManagerDB.js";
+import mongoStore from "connect-mongo";
+import session from "express-session";
+import usersRouter from "./routes/usersRouter.js";
 
 const app = express();
+const uri =
+"mongodb+srv://Flame:h0zjMpQ1ABLDES5E@cluster0.f9ba6by.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 const conexion = async () => {
   try {
-    await mongoose.connect(
-      "mongodb+srv://Flame:h0zjMpQ1ABLDES5E@cluster0.f9ba6by.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
-      { dbName: "products" }
-    );
+    await mongoose.connect(uri, { dbName: "products" });
     console.log("Connected to MongoDB Atlas");
   } catch (error) {
     console.error("Failed to connect to MongoDB Atlas:", error.message);
@@ -34,11 +35,25 @@ app.set("view engine", "handlebars");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
+app.use("/js", express.static(__dirname + "/path/to/js"));
+
+app.use(
+  session({
+    store: mongoStore.create({
+      mongoUrl: uri,
+      ttl: 20,
+    }),
+    secret: "secretPhrase",
+    resave: true,
+    saveUninitialized: true,
+  })
+);
 
 // Routers
+app.use("/api/session", usersRouter);
 app.use("/api/products", productRouter);
 app.use("/api/carts", cartRouter);
-app.use("/products", viewsRouter);
+app.use("/", viewsRouter);
 
 // Start server
 const PORT = 8080;
@@ -49,30 +64,3 @@ const httpServer = app.listen(PORT, () => {
 // Socket.io integration
 const io = new Server(httpServer);
 websocket(io);
-
-// Instantiate MessageManagerDB
-
-// Handle Socket.io events
-io.on("connection", (socket) => {
-  console.log("New user connected: ", socket.id);
-
-  socket.on("message", async (data) => {
-    console.log(`Message received from ${socket.id}: ${data.message}`);
-    // Handle message logic here
-    try {
-      await messagemanagerdb.insertMessage(data.user, data.message);
-      io.emit("messagesLogs", await messagemanagerdb.getAllMessages());
-    } catch (error) {
-      console.error("Error handling message:", error.message);
-    }
-  });
-
-  socket.on("userConnect", async (data) => {
-    try {
-      socket.emit("messagesLogs", await messagemanagerdb.getAllMessages());
-      socket.broadcast.emit("newUser", data);
-    } catch (error) {
-      console.error("Error handling user connection:", error.message);
-    }
-  });
-});

@@ -1,41 +1,41 @@
 * {
-  background-color: #000;
-  color: #0f0;
+  background-color: #080808; /* Dark gray */
+  color: #66ff00; /* Neon green */
   font-family: "Arial", sans-serif;
 }
 
 hr {
   width: 100%;
-  border-color: #0f0;
+  border-color: #66ff00; /* Neon green */
 }
 
 h3,
 h1 {
   text-align: center;
   font-family: "Montserrat", sans-serif;
-  color: #0f0;
+  color: #66ff00; /* Neon green */
 }
 
 input {
-  background: #000;
-  color: #0f0;
-  border: 1px solid #0f0;
+  background: #080808; /* Dark gray */
+  color: #66ff00; /* Neon green */
+  border: 1px solid #66ff00; /* Neon green */
   border-radius: 5px;
-  padding: 5px;
+  padding: 8px;
 }
 
 button {
   cursor: pointer;
-  padding: 5px;
+  padding: 8px;
   border: none;
   border-radius: 3px;
-  background-color: #0f0;
-  color: #000;
+  background-color: #66ff00; /* Neon green */
+  color: #080808; /* Dark gray */
   transition: background-color 0.3s;
 }
 
 button:hover {
-  background-color: #00f;
+  background-color: #00ffff; /* Cyan */
 }
 
 .box {
@@ -43,8 +43,8 @@ button:hover {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #000;
-  border: 1px solid #0f0;
+  background-color: #080808; /* Dark gray */
+  border: 1px solid #66ff00; /* Neon green */
   border-radius: 10px;
   padding: 20px;
   margin: 20px auto;
@@ -63,21 +63,21 @@ button:hover {
   max-width: 400px;
   margin: 20px auto;
   padding: 20px;
-  border: 1px solid #0f0;
+  border: 1px solid #66ff00; /* Neon green */
   border-radius: 5px;
   font-family: "Montserrat", sans-serif;
-  background-color: #000;
+  background-color: #080808; /* Dark gray */
 }
 
 .product-card {
-  border: 1px solid #0f0;
+  border: 1px solid #66ff00; /* Neon green */
   border-radius: 5px;
   padding: 20px;
   font-family: "Montserrat", sans-serif;
   margin: 10px;
   flex: 1 1 calc(25% - 20px);
   max-width: calc(50% - 20px);
-  background-color: #000;
+  background-color: #080808; /* Dark gray */
 }
 
 .products-form form {
@@ -92,53 +92,68 @@ button:hover {
 
 #button-create,
 #button-delete {
-  background-color: #0f0;
-  color: #000;
+  background-color: #66ff00; /* Neon green */
+  color: #080808; /* Dark gray */
 }
 
 body {
-  background-color: #000;
-  color: #0f0;
+  background-color: #080808; /* Dark gray */
+  color: #66ff00; /* Neon green */
   font-family: "Arial", sans-serif;
   margin: 0;
   padding: 0;
+  text-align: center;
 }
 
 h1 {
   text-align: center;
   margin-top: 2rem;
-  color: #0f0;
+  color: #66ff00; /* Neon green */
+}
+
+input {
+  margin-bottom: 10px;
+  border-radius: 5px;
+  height: 2rem;
+  font-family: "Montserrat", sans-serif;
+}
+
+.box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .boxMessages {
   margin-left: 10px;
   margin-top: 2rem;
-  background-color: #000;
-  color: #0f0;
+  background-color: #080808; /* Dark gray */
+  color: #66ff00; /* Neon green */
 }
 
 .red {
-  color: #f00;
+  color: #ff0000; /* Red */
 }
 
 .black {
-  color: #000;
+  color: #080808; /* Dark gray */
 }
 
 .container {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #000;
+  background-color: #080808; /* Dark gray */
 }
 
 h1 {
   text-align: center;
-  color: #0f0;
+  color: #66ff00; /* Neon green */
 }
 
 .boxMessages {
-  background-color: #000;
+  background-color: #080808; /* Dark gray */
   border-radius: 5px;
   padding: 20px;
   margin-bottom: 20px;
@@ -151,7 +166,7 @@ h1 {
 }
 
 .box {
-  background-color: #000;
+  background-color: #080808; /* Dark gray */
   border-radius: 5px;
   padding: 20px;
   margin: 0 auto;
@@ -164,7 +179,7 @@ input[type="text"] {
   width: calc(100% - 20px);
   padding: 10px;
   margin-bottom: 10px;
-  border: 1px solid #0f0;
+  border: 1px solid #66ff00; /* Neon green */
   border-radius: 5px;
 }
 
@@ -174,111 +189,23 @@ input[type="text"] {
 
 #submitBtn {
   padding: 10px 20px;
-  background-color: #0f0;
-  color: #000;
+  background-color: #66ff00; /* Neon green */
+  color: #080808; /* Dark gray */
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
-.cart {
-  background-color: #000;
-  border-radius: 5px;
-  padding: 20px;
-  margin: 0 auto;
-  max-width: 800px;
-  box-shadow: 0 0 10px rgba(0, 240, 0, 0.1);
-}
-
-.cart-header {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #0f0;
-}
-
-.cart-title {
-  color: #0f0;
-}
-
-.cart-items {
-  margin-bottom: 20px;
-}
-
-.cart-item {
-  display: flex;
-  margin-bottom: 20px;
-}
-
-.item-image {
-  margin-right: 20px;
-}
-
-.item-image img {
-  max-width: 100px;
-  border-radius: 5px;
-}
-
-.item-details {
-  flex: 1;
-}
-
-.item-name {
-  color: #0f0;
-  font-weight: bold;
-}
-
-.item-description {
-  color: #666;
-}
-
-.item-price {
-  color: #f00;
-  font-weight: bold;
-}
-
-.item-quantity {
-  color: #666;
-}
-
-.item-actions {
-  display: flex;
-  align-items: center;
-}
-
-.remove-item {
-  padding: 5px 10px;
-  background-color: #0f0;
-  color: #000;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.remove-item:hover {
-  background-color: #00f;
-}
-
-.cart-total {
-  text-align: right;
-  margin-bottom: 20px;
-}
-
-.cart-total p {
-  font-weight: bold;
-}
-
-.cart-actions {
-  display: flex;
-  justify-content: flex-end;
+#submitBtn:hover {
+  background-color: #00ffff; /* Cyan */
 }
 
 .next,
 .prev {
-  padding: 5px 3rem;
-  background-color: #0f0;
-  color: #000;
+  padding: 10px 30px; /* Increased padding */
+  background-color: #66ff00; /* Neon green */
+  color: #080808; /* Dark gray */
   border: none;
   border-radius: 3px;
   cursor: pointer;
@@ -286,21 +213,162 @@ input[type="text"] {
   font-family: "Montserrat", sans-serif;
   margin: 2rem;
   text-decoration: none;
-  text-align: center;
-  width: 5rem;
+  width: 100px; /* Adjusted width */
+  display: inline-block; /* Prevent stacking */
   transition: background-color 0.3s;
-}
-
-.next {
-  margin-left: 1rem;
-}
-
-.prev {
-  margin-right: 1rem;
 }
 
 .next:hover,
 .prev:hover {
-  background-color: #00f;
+  background-color: #00ffff; /* Cyan */
 }
 
+.add-to-cart-button {
+  background-color: #66ff00; /* Neon green */
+  color: #080808; /* Dark gray */
+  border: none;
+  padding: 10px 20px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-family: "Montserrat", sans-serif;
+}
+
+.add-to-cart-button:hover {
+  background-color: #00ffff; /* Cyan */
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #080808; /* Dark gray */
+}
+
+h1 {
+  text-align: center;
+  color: #66ff00; /* Neon green */
+}
+
+.box {
+  background-color: #080808; /* Dark gray */
+  border-radius: 5px;
+  padding: 20px;
+  margin: 0 auto;
+  margin-top: 100px;
+  max-width: 400px;
+  box-shadow: 0 0 10px rgba(0, 240, 0, 0.1);
+}
+
+h1,
+h3 {
+  text-align: center;
+  font-family: "Montserrat", sans-serif;
+  color: #66ff00; /* Neon green */
+}
+
+input {
+  margin-bottom: 10px;
+  border-radius: 5px;
+  height: 2rem;
+  font-family: "Montserrat", sans-serif;
+}
+
+.box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.boxMessages {
+  background-color: #080808; /* Dark gray */
+  border-radius: 5px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px rgba(0, 240, 0, 0.1);
+}
+
+.boxMessages {
+  margin-left: 10px;
+  margin-top: 2rem;
+  color: #66ff00; /* Neon green */
+}
+
+.red {
+  color: #ff0000; /* Red */
+}
+
+.black {
+  color: #080808; /* Dark gray */
+}
+
+.products-form {
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #66ff00; /* Neon green */
+  border-radius: 5px;
+  font-family: "Montserrat", sans-serif;
+  background-color: #080808; /* Dark gray */
+}
+
+.products-form form {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+.products-form input {
+  margin-bottom: 5px;
+}
+
+.button {
+  cursor: pointer;
+  padding: 5px;
+}
+
+.button-create,
+.button-delete {
+  background-color: #66ff00; /* Neon green */
+  color: #080808; /* Dark gray */
+  border: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-family: "Montserrat", sans-serif;
+}
+
+.button-create:hover,
+.button-delete:hover {
+  background-color: #00ffff; /* Cyan */
+}
+
+#submitContainer {
+  text-align: center;
+}
+
+#submitBtn {
+  padding: 10px 20px;
+  background-color: #66ff00; /* Neon green */
+  color: #080808; /* Dark gray */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#submitBtn:hover {
+  background-color: #00ffff; /* Cyan */
+}
+
+.submit {
+  background-color: #66ff00; /* Neon green */
+  color: #080808; /* Dark gray */
+  border: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-family: "Montserrat", sans-serif;
+}

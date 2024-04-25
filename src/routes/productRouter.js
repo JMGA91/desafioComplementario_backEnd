@@ -4,12 +4,12 @@ import { uploader } from "../utils/multerUtil.js";
 import productModel from "../dao/models/productModel.js";
 
 const router = Router();
-
+//const ProductService = new productManagerFS('products.json');
 const ProductService = new productManagerDB();
 
 router.get("/", async (req, res) => {
   try {
-    let { limit = 3, page = 1, query = {}, sort = null } = req.query;
+    let { limit = 10, page = 1, query = {}, sort = null } = req.query;
     const result = await ProductService.getAllProducts(
       limit,
       page,
@@ -20,7 +20,7 @@ router.get("/", async (req, res) => {
       status: "success",
       payload: result,
     });
-
+    
   } catch (error) {
     console.error(error);
     res.status(500).send({

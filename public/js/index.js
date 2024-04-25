@@ -4,6 +4,10 @@ function $(selector) {
   return document.querySelector(selector);
 }
 
+function addProductToCart(pid) {
+  console.log(`Product with ID ${pid} added to cart`);
+}
+
 socket.on("statusError", (data) => {
   console.log(data);
   alert(data);
