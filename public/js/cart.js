@@ -1,5 +1,3 @@
-// cart.js
-
 // Establish socket connection
 const socket = io();
 

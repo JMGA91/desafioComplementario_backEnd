@@ -6,8 +6,8 @@ import { auth } from "../middlewares/auth.js";
 import { userModel } from "../dao/models/userModel.js";
 
 const router = Router();
-const productService = new productManagerDB();
-const cartService = new cartManagerDB();
+const productManagerService = new productManagerDB();
+const cartManagerService = new cartManagerDB();
 
 router.get("/", (req, res) => {
   res.render("home", {
@@ -61,7 +61,7 @@ router.get("/products", async (req, res) => {
   res.render("products", {
     title: "Productos",
     style: "index.css",
-    products: await productService.getAllProducts(limit, page),
+    products: await productManagerService.getAllProducts(limit, page),
   });
 });
 
@@ -69,7 +69,7 @@ router.get("/realtimeproducts", async (req, res) => {
   res.render("realTimeProducts", {
     title: "Productos",
     style: "index.css",
-    products: await productService.getAllProducts(),
+    products: await productManagerService.getAllProducts(),
   });
 });
 
@@ -88,11 +88,11 @@ router.get("/chat", async (req, res) => {
 });
 
 router.get("/cart", auth, async (req, res) => {
-  const cartId = req.params.cid;
+  const cartId = req.query.cid;
   try {
-    const cart = await cartService.getProductsFromCartByID(cartId);
+    const cart = await cartManagerService.getProductsFromCartByID(cartId);
     res.render("cart", {
-      title: "FlameShop Cart",
+      title: "FlameShop | Cart",
       style: "index.css",
       cartId: cartId,
       products: cart.products,
@@ -100,6 +100,7 @@ router.get("/cart", auth, async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+    res.redirect("/error");
   }
 });
 

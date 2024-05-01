@@ -1,26 +1,49 @@
-<div class="box">
-  <h1>Productos</h1>
-  <div class="products-box">
-    {{#each products.docs}}
-      <div class="product-card">
-        <h3>{{this.title}}</h3>
-        <hr />
-        <p>Categoria: {{this.category}}</p>
-        <p>Descripción: {{this.description}}</p>
-        <p>Precio: $ {{this.price}}</p>
-        <button
-          onclick="addToCart('{{this._id}}')"
-          class="add-to-cart-button"
-        >Add to Cart</button>
-      </div>
-    {{/each}}
+<div class="container">
+  <nav>
+    <ul class="nav_list">
+      <li class="nav__item">
+        <a class="nav_link" href="/products/">Products</a>
+      </li>
+      <li class="nav__item">
+        <a class="nav_link" href="/realtimeproducts">Post</a>
+      </li>
+      <li class="nav__item">
+        <a class="nav_link" href="/chat">Help!</a>
+      </li>
+      <li class="nav__item">
+        <a class="nav_link" href="/cart?cid={{user.cart}}">Cart</a>
+      </li>
+      <li class="nav__item">
+        <a class="nav_link" href="/api/session/logout">Logout</a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="box">
+    <h1>Productos</h1>
+    <div class="products-box">
+      {{#each products.docs}}
+        <div class="product-card">
+          <h3>{{this.title}}</h3>
+          <hr />
+          <p>Categoria: {{this.category}}</p>
+          <p>Descripción: {{this.description}}</p>
+          <p>Precio: $ {{this.price}}</p>
+          <button
+            onclick="addToCart('{{this._id}}', '{{user.cid}}')"
+            class="add-to-cart-button"
+          >Add to Cart</button>
+        </div>
+      {{/each}}
+    </div>
+    <div class="paginate">
+      {{#if products.prevPage}}
+        <a href="/products?page={{products.prevPage}}" class="prev">previous</a>
+      {{/if}}
+      {{#if products.nextPage}}
+        <a href="/products?page={{products.nextPage}}" class="next">next</a>
+      {{/if}}
+    </div>
   </div>
-  <div class="paginate">
-    {{#if products.prevPage}}
-      <a href="/products?page={{products.prevPage}}" class="prev">previous</a>
-    {{/if}}
-    {{#if products.nextPage}}
-      <a href="/products?page={{products.nextPage}}" class="next">next</a>
-    {{/if}}
-  </div>
+
 </div>

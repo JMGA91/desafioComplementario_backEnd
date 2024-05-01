@@ -3,12 +3,14 @@ import cartManagerDB from "../dao/cartManagerDB.js";
 import userManagerDB from "../dao/userManagerDB.js";
 
 const router = Router();
-const CartService = new cartManagerDB();
-const userService = new userManagerDB();
+const cartManagerService = new cartManagerDB();
+const userManagerService = new userManagerDB();
 
 router.get("/:cid", async (req, res) => {
   try {
-    const result = await CartService.getProductsFromCartByID(req.params.cid);
+    const result = await cartManagerService.getProductsFromCartByID(
+      req.params.cid
+    );
     res.send({
       status: "success",
       payload: result,
@@ -23,7 +25,7 @@ router.get("/:cid", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    const result = await CartService.createCart();
+    const result = await cartManagerService.createCart();
     res.send({
       status: "success",
       message: "Your cart has been successfully created",
@@ -40,9 +42,9 @@ router.post("/", async (req, res) => {
 router.post("/register", async (req, res) => {
   const user = req.body;
   try {
-    const response = await userService.registerUser(user);
-    const cart = await cartService.createCart();
-    await userService.updateUser(response._id, { cart: cart._id });
+    const response = await userManagerService.registerUser(user);
+    const cart = await cartManagerService.createCart();
+    await userManagerService.updateUser(response._id, { cart: cart._id });
     res.redirect("/user");
   } catch (error) {
     res.redirect("/register");
@@ -51,7 +53,7 @@ router.post("/register", async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const carts = await CartService.getAllCarts();
+    const carts = await cartManagerService.getAllCarts();
     res.send({ carts });
   } catch (error) {
     res.status(400).send({
@@ -67,7 +69,7 @@ router.post("/:cid/products/:pid", async (req, res) => {
   const quantity = req.body.quantity;
 
   try {
-    await CartService.addProductToCart(cartId, productId, quantity);
+    await cartManagerService.addProductToCart(cartId, productId, quantity);
     res.send({
       status: "success",
       message: "Product has been added successfully",
@@ -85,7 +87,7 @@ router.put("/:cid", async (req, res) => {
   const cartId = req.params.cid;
   const products = req.body.products;
   try {
-    const cart = await CartService.updateCart(cartId, products);
+    const cart = await cartManagerService.updateCart(cartId, products);
     res.send({ status: "success", message: "Your cart has been edited", cart });
   } catch (error) {
     console.error(error);
@@ -97,7 +99,7 @@ router.put("/:cid/products/:pid", async (req, res) => {
   const productId = req.params.pid;
   const quantity = req.body.quantity;
   try {
-    await CartService.updateProductQuantity(cartId, productId, quantity);
+    await cartManagerService.updateProductQuantity(cartId, productId, quantity);
     res.send({ status: "success", message: "Quantity changed" });
   } catch (error) {
     console.error(error);
@@ -111,7 +113,7 @@ router.put("/:cid/products/:pid", async (req, res) => {
 router.delete("/:cid", async (req, res) => {
   const cartId = req.params.cid;
   try {
-    await CartService.deleteAllProductsFromCart(cartId);
+    await cartManagerService.deleteAllProductsFromCart(cartId);
     res.send("Cart has been deleted");
   } catch (error) {
     console.error(error);
@@ -125,7 +127,7 @@ router.delete("/:cid/products/:pid", async (req, res) => {
   const cartId = req.params.cid;
   const productId = req.params.pid;
   try {
-    await CartService.deleteProductFromCart(cartId, productId);
+    await cartManagerService.deleteProductFromCart(cartId, productId);
     res.send(`Product ${productId} has been deleted from the cart`);
   } catch (error) {
     console.error(error);

@@ -1,31 +1,53 @@
-<div class="cart">
-  <div class="cart-header">
-    <h2 class="cart-title">Your Cart</h2>
-  </div>
-  <div class="cart-items">
-    {{#each products}}
-      <div class="cart-item">
-        <div class="item-image">
-          <img src="{{this.product.image}}" alt="{{this.product.name}}" />
+<div class="container">
+  <nav>
+    <ul class="nav_list">
+      <li class="nav__item">
+        <a class="nav_link" href="/products/">Products</a>
+      </li>
+      <li class="nav__item">
+        <a class="nav_link" href="/realtimeproducts">Post</a>
+      </li>
+      <li class="nav__item">
+        <a class="nav_link" href="/chat">Help!</a>
+      </li>
+      <li class="nav__item">
+        <a class="nav_link" href="/cart?cid={{user.cart}}">Cart</a>
+      </li>
+      <li class="nav__item">
+        <a class="nav_link" href="/api/session/logout">Logout</a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="cart">
+    <div class="cart-header">
+      <h2 class="cart-title">Your Cart</h2>
+    </div>
+    <div class="cart-items">
+      {{#each products}}
+        <div class="cart-item">
+          <div class="item-image">
+            <img src="{{this.product.image}}" alt="{{this.product.name}}" />
+          </div>
+          <div class="item-details">
+            <h3 class="item-name">{{this.product.name}}</h3>
+            <p class="item-description">{{this.product.description}}</p>
+            <p class="item-price">${{this.product.price}}</p>
+            <p class="item-quantity">Quantity: {{this.quantity}}</p>
+          </div>
+          <div class="item-actions">
+            <button class="remove-item">Remove</button>
+          </div>
         </div>
-        <div class="item-details">
-          <h3 class="item-name">{{this.product.name}}</h3>
-          <p class="item-description">{{this.product.description}}</p>
-          <p class="item-price">${{this.product.price}}</p>
-          <p class="item-quantity">Quantity: {{this.quantity}}</p>
-        </div>
-        <div class="item-actions">
-          <button class="remove-item">Remove</button>
-        </div>
-      </div>
-    {{/each}}
-  </div>
-  <div class="cart-total">
-    <p>Total: ${{totalPrice}}</p>
-  </div>
-  <div class="cart-actions">
-    <button class="checkout-btn">Checkout</button>
-    <button class="clear-cart-btn">Clear Cart</button>
+      {{/each}}
+    </div>
+    <div class="cart-total">
+      <p>Total: ${{totalPrice}}</p>
+    </div>
+    <div class="cart-actions">
+      <button class="checkout-btn">Checkout</button>
+      <button class="clear-cart-btn">Clear Cart</button>
+    </div>
   </div>
 </div>
 

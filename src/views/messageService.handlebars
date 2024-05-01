@@ -1,19 +1,46 @@
-<h1><span class="red">Contact</span><span class="black">Us</span></h1>
-<h3>
-  Thank you for contacting us!</h3>
-<div class="box">
-  <label for="usernameInput">Email</label>
-  <input
-    type="text"
-    id="usernameInput"
-    placeholder="Enter your nickname"
-  />
-  <label for="chatBoxInput">Message</label>
-  <input id="chatBox" name="chatBox" type="text" placeholder="Enter messaage" />
-</div>
+<div class="container">
+  <nav>
+    <ul class="nav_list">
+      <li class="nav__item">
+        <a class="nav_link" href="/products/">Products</a>
+      </li>
+      <li class="nav__item">
+        <a class="nav_link" href="/realtimeproducts">Post</a>
+      </li>
+      <li class="nav__item">
+        <a class="nav_link" href="/chat">Help!</a>
+      </li>
+      <li class="nav__item">
+        <a class="nav_link" href="/cart?cid={{user.cart}}">Cart</a>
+      </li>
+      <li class="nav__item">
+        <a class="nav_link" href="/api/session/logout">Logout</a>
+      </li>
+    </ul>
+  </nav>
 
-<div id="submitContainer">
-  <button id="submitBtn">Submit</button>
+  <h1><span class="red">Contact</span><span class="black">Us</span></h1>
+  <h3>
+    Let us know what you think!</h3>
+  <div class="box">
+    <label for="usernameInput">Email</label>
+    <input
+      type="text"
+      id="usernameInput"
+      placeholder="Enter your name or nickname"
+    />
+    <label for="chatBoxInput">Message</label>
+    <input
+      id="chatBox"
+      name="chatBox"
+      type="text"
+      placeholder="Enter messaage"
+    />
+  </div>
+
+  <div id="submitContainer">
+    <button id="submitBtn">Submit</button>
+  </div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>

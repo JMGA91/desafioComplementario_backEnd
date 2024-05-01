@@ -1,16 +1,17 @@
 import { Router } from "express";
+//import { productManagerFS } from '../dao/productManagerFS.js';
 import { productManagerDB } from "../dao/productManagerDB.js";
 import { uploader } from "../utils/multerUtil.js";
 import productModel from "../dao/models/productModel.js";
 
 const router = Router();
 //const ProductService = new productManagerFS('products.json');
-const ProductService = new productManagerDB();
+const productManagerService = new productManagerDB();
 
 router.get("/", async (req, res) => {
   try {
     let { limit = 10, page = 1, query = {}, sort = null } = req.query;
-    const result = await ProductService.getAllProducts(
+    const result = await productManagerService.getAllProducts(
       limit,
       page,
       query,
@@ -20,7 +21,6 @@ router.get("/", async (req, res) => {
       status: "success",
       payload: result,
     });
-    
   } catch (error) {
     console.error(error);
     res.status(500).send({
@@ -39,7 +39,7 @@ router.post("/", uploader.array("thumbnails", 3), async (req, res) => {
   }
 
   try {
-    const result = await ProductService.createProduct(req.body);
+    const result = await productManagerService.createProduct(req.body);
     res.send({
       status: "success",
       payload: result,
@@ -61,7 +61,10 @@ router.put("/:pid", uploader.array("thumbnails", 3), async (req, res) => {
   }
 
   try {
-    const result = await ProductService.updateProduct(req.params.pid, req.body);
+    const result = await productManagerService.updateProduct(
+      req.params.pid,
+      req.body
+    );
     res.send({
       status: "success",
       payload: result,
@@ -76,7 +79,7 @@ router.put("/:pid", uploader.array("thumbnails", 3), async (req, res) => {
 
 router.delete("/:pid", async (req, res) => {
   try {
-    const result = await ProductService.deleteProduct(req.params.pid);
+    const result = await productManagerService.deleteProduct(req.params.pid);
     res.send({
       status: "success",
       payload: result,
@@ -114,7 +117,7 @@ router.get("/search", async (req, res) => {
 
 router.get("/:pid", async (req, res) => {
   try {
-    const result = await ProductService.getProductByID(req.params.pid);
+    const result = await productManagerService.getProductByID(req.params.pid);
     res.send({
       status: "success",
       payload: result,

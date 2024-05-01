@@ -10,10 +10,15 @@ import mongoose from "mongoose";
 import mongoStore from "connect-mongo";
 import session from "express-session";
 import usersRouter from "./routes/usersRouter.js";
+import passport from "passport";
+import initializatePassport from "./config/passportConfig.js";
+import sessionRouter from "./routes/sessionRouter.js";
+import * as dotenv from "dotenv";
+
+dotenv.config({ path: "./src/mongo.env" });
 
 const app = express();
-const uri =
-"mongodb+srv://Flame:h0zjMpQ1ABLDES5E@cluster0.f9ba6by.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri = process.env.URI;
 
 const conexion = async () => {
   try {
@@ -37,6 +42,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use("/js", express.static(__dirname + "/path/to/js"));
 
+//Passport
+initializatePassport();
+app.use(passport.initialize());
+
+// Use express-session before passport.session()
 app.use(
   session({
     store: mongoStore.create({
@@ -49,8 +59,11 @@ app.use(
   })
 );
 
+app.use(passport.session());
+
 // Routers
-app.use("/api/session", usersRouter);
+app.use("/api/session", sessionRouter);
+app.use("/api/users", usersRouter);
 app.use("/api/products", productRouter);
 app.use("/api/carts", cartRouter);
 app.use("/", viewsRouter);

@@ -1,25 +1,30 @@
 * {
-  background-color: #080808; /* Dark gray */
-  color: #66ff00; /* Neon green */
-  font-family: "Arial", sans-serif;
+  color: #0d98ff; /* Electric blue */
+  font-family: "Roboto", sans-serif; 
+}
+
+.github-icon {
+  fill: #0d98ff; /* Electric blue */
 }
 
 hr {
   width: 100%;
-  border-color: #66ff00; /* Neon green */
+  border-color: #0d98ff; /* Electric blue */
 }
 
 h3,
 h1 {
   text-align: center;
-  font-family: "Montserrat", sans-serif;
-  color: #66ff00; /* Neon green */
+  color: #0d98ff; /* Electric blue */
+  font-weight: bold; 
+  text-transform: uppercase; 
+  letter-spacing: 1px; 
 }
 
-input {
-  background: #080808; /* Dark gray */
-  color: #66ff00; /* Neon green */
-  border: 1px solid #66ff00; /* Neon green */
+input, textarea {
+  background: transparent; /* Set input and textarea background to transparent */
+  color: #0d98ff; /* Electric blue */
+  border: 1px solid #0d98ff; /* Electric blue */
   border-radius: 5px;
   padding: 8px;
 }
@@ -29,13 +34,15 @@ button {
   padding: 8px;
   border: none;
   border-radius: 3px;
-  background-color: #66ff00; /* Neon green */
-  color: #080808; /* Dark gray */
+  background-color: #0d98ff; /* Electric blue */
+  color: #1e1e1e; 
+  font-weight: bold; 
+  text-transform: uppercase; /* Uppercase button text */
   transition: background-color 0.3s;
 }
 
 button:hover {
-  background-color: #00ffff; /* Cyan */
+  background-color: #ff00ff; /* Electric purple */
 }
 
 .box {
@@ -43,11 +50,12 @@ button:hover {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #080808; /* Dark gray */
-  border: 1px solid #66ff00; /* Neon green */
+  background-color: #1e1e1e; /* Slightly lighter background */
+  border: 1px solid #0d98ff; /* Electric blue */
   border-radius: 10px;
   padding: 20px;
   margin: 20px auto;
+  box-shadow: 0 0 10px rgba(0, 240, 0, 0.1);
 }
 
 .products-box {
@@ -63,21 +71,19 @@ button:hover {
   max-width: 400px;
   margin: 20px auto;
   padding: 20px;
-  border: 1px solid #66ff00; /* Neon green */
+  border: 1px solid #0d98ff; /* Electric blue */
   border-radius: 5px;
-  font-family: "Montserrat", sans-serif;
-  background-color: #080808; /* Dark gray */
+  background-color: #1e1e1e; /* Slightly lighter background */
 }
 
 .product-card {
-  border: 1px solid #66ff00; /* Neon green */
+  border: 1px solid #0d98ff; /* Electric blue */
   border-radius: 5px;
   padding: 20px;
-  font-family: "Montserrat", sans-serif;
   margin: 10px;
   flex: 1 1 calc(25% - 20px);
   max-width: calc(50% - 20px);
-  background-color: #080808; /* Dark gray */
+  background-color: #1e1e1e; /* Slightly lighter background */
 }
 
 .products-form form {
@@ -86,20 +92,24 @@ button:hover {
   flex-wrap: wrap;
 }
 
-.products-form input {
+.products-form input, .products-form textarea {
   margin-bottom: 10px;
+  border-radius: 5px;
+  padding: 8px;
 }
 
 #button-create,
 #button-delete {
-  background-color: #66ff00; /* Neon green */
-  color: #080808; /* Dark gray */
+  background-color: #0d98ff; /* Electric blue */
+  color: #1e1e1e; 
 }
 
 body {
-  background-color: #080808; /* Dark gray */
-  color: #66ff00; /* Neon green */
-  font-family: "Arial", sans-serif;
+  background-image: url('https://source.unsplash.com/1920x1080/?cyberpunk');
+  background-size: cover;
+  background-position: center;
+  color: #0d98ff; /* Electric blue */
+  font-family: "Roboto", sans-serif; 
   margin: 0;
   padding: 0;
   text-align: center;
@@ -108,28 +118,13 @@ body {
 h1 {
   text-align: center;
   margin-top: 2rem;
-  color: #66ff00; /* Neon green */
-}
-
-input {
-  margin-bottom: 10px;
-  border-radius: 5px;
-  height: 2rem;
-  font-family: "Montserrat", sans-serif;
-}
-
-.box {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
 }
 
 .boxMessages {
   margin-left: 10px;
   margin-top: 2rem;
-  background-color: #080808; /* Dark gray */
-  color: #66ff00; /* Neon green */
+  background-color: #1e1e1e; 
+  color: #0d98ff; /* Electric blue */
 }
 
 .red {
@@ -137,37 +132,26 @@ input {
 }
 
 .black {
-  color: #080808; /* Dark gray */
+  color: #1e1e1e; 
 }
 
 .container {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #080808; /* Dark gray */
-}
-
-h1 {
-  text-align: center;
-  color: #66ff00; /* Neon green */
+  background-color: #1e1e1e; 
 }
 
 .boxMessages {
-  background-color: #080808; /* Dark gray */
+  background-color: #1e1e1e; 
   border-radius: 5px;
   padding: 20px;
   margin-bottom: 20px;
   box-shadow: 0 0 10px rgba(0, 240, 0, 0.1);
 }
 
-#messagesLogs {
-  overflow-y: scroll;
-  max-height: 200px;
-}
-
 .box {
-  background-color: #080808; /* Dark gray */
-  border-radius: 5px;
+  background-color: #1e1e1e; 
   padding: 20px;
   margin: 0 auto;
   margin-top: 100px;
@@ -179,7 +163,7 @@ input[type="text"] {
   width: calc(100% - 20px);
   padding: 10px;
   margin-bottom: 10px;
-  border: 1px solid #66ff00; /* Neon green */
+  border: 1px solid #0d98ff; /* Electric blue */
   border-radius: 5px;
 }
 
@@ -189,68 +173,66 @@ input[type="text"] {
 
 #submitBtn {
   padding: 10px 20px;
-  background-color: #66ff00; /* Neon green */
-  color: #080808; /* Dark gray */
-  border: none;
+  background-color: #0d98ff; /* Electric blue */
+  color: #1e1e1e; 
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
 #submitBtn:hover {
-  background-color: #00ffff; /* Cyan */
+  background-color: #ff00ff; /* Electric purple */
 }
 
 .next,
 .prev {
-  padding: 10px 30px; /* Increased padding */
-  background-color: #66ff00; /* Neon green */
-  color: #080808; /* Dark gray */
+  padding: 10px 30px; 
+  background-color: #0d98ff; /* Electric blue */
+  color: #1e1e1e;
   border: none;
   border-radius: 3px;
   cursor: pointer;
   margin-top: 10px;
-  font-family: "Montserrat", sans-serif;
+  font-family: "Roboto", sans-serif;
   margin: 2rem;
   text-decoration: none;
-  width: 100px; /* Adjusted width */
-  display: inline-block; /* Prevent stacking */
+  width: 100px; 
+  display: inline-block; 
   transition: background-color 0.3s;
 }
 
 .next:hover,
 .prev:hover {
-  background-color: #00ffff; /* Cyan */
+  background-color: #ff00ff; /* Electric purple */
 }
 
 .add-to-cart-button {
-  background-color: #66ff00; /* Neon green */
-  color: #080808; /* Dark gray */
+  background-color: #0d98ff; /* Electric blue */
+  color: #1e1e1e;
   border: none;
   padding: 10px 20px;
   border-radius: 3px;
   cursor: pointer;
-  font-family: "Montserrat", sans-serif;
+  font-family: "Roboto", sans-serif; 
 }
 
 .add-to-cart-button:hover {
-  background-color: #00ffff; /* Cyan */
+  background-color: #ff00ff; /* Electric purple */
 }
 
 .container {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #080808; /* Dark gray */
+  background-color: #1e1e1e; 
 }
 
 h1 {
   text-align: center;
-  color: #66ff00; /* Neon green */
 }
 
 .box {
-  background-color: #080808; /* Dark gray */
+  background-color: #1e1e1e; 
   border-radius: 5px;
   padding: 20px;
   margin: 0 auto;
@@ -262,15 +244,13 @@ h1 {
 h1,
 h3 {
   text-align: center;
-  font-family: "Montserrat", sans-serif;
-  color: #66ff00; /* Neon green */
+  color: #0d98ff; /* Electric blue */
 }
 
 input {
   margin-bottom: 10px;
   border-radius: 5px;
   height: 2rem;
-  font-family: "Montserrat", sans-serif;
 }
 
 .box {
@@ -281,7 +261,7 @@ input {
 }
 
 .boxMessages {
-  background-color: #080808; /* Dark gray */
+  background-color: #1e1e1e; 
   border-radius: 5px;
   padding: 20px;
   margin-bottom: 20px;
@@ -291,7 +271,6 @@ input {
 .boxMessages {
   margin-left: 10px;
   margin-top: 2rem;
-  color: #66ff00; /* Neon green */
 }
 
 .red {
@@ -299,17 +278,17 @@ input {
 }
 
 .black {
-  color: #080808; /* Dark gray */
+  color: #1e1e1e; 
 }
 
 .products-form {
   max-width: 400px;
   margin: 20px auto;
   padding: 20px;
-  border: 1px solid #66ff00; /* Neon green */
+  border: 1px solid #0d98ff; /* Electric blue */
   border-radius: 5px;
-  font-family: "Montserrat", sans-serif;
-  background-color: #080808; /* Dark gray */
+  font-family: "Roboto", sans-serif;
+  background-color: #1e1e1e; 
 }
 
 .products-form form {
@@ -318,8 +297,10 @@ input {
   flex-wrap: wrap;
 }
 
-.products-form input {
+.products-form input, .products-form textarea {
   margin-bottom: 5px;
+  border-radius: 5px;
+  padding: 8px;
 }
 
 .button {
@@ -329,19 +310,19 @@ input {
 
 .button-create,
 .button-delete {
-  background-color: #66ff00; /* Neon green */
-  color: #080808; /* Dark gray */
+  background-color: #0d98ff; /* Electric blue */
+  color: #1e1e1e; 
   border: none;
   padding: 5px 10px;
   border-radius: 3px;
   cursor: pointer;
   margin-top: 10px;
-  font-family: "Montserrat", sans-serif;
+  font-family: "Roboto", sans-serif; 
 }
 
 .button-create:hover,
 .button-delete:hover {
-  background-color: #00ffff; /* Cyan */
+  background-color: #ff00ff; /* Electric purple */
 }
 
 #submitContainer {
@@ -350,8 +331,8 @@ input {
 
 #submitBtn {
   padding: 10px 20px;
-  background-color: #66ff00; /* Neon green */
-  color: #080808; /* Dark gray */
+  background-color: #0d98ff; /* Electric blue */
+  color: #1e1e1e; 
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -359,16 +340,45 @@ input {
 }
 
 #submitBtn:hover {
-  background-color: #00ffff; /* Cyan */
+  background-color: #ff00ff; /* Electric purple */
 }
 
 .submit {
-  background-color: #66ff00; /* Neon green */
-  color: #080808; /* Dark gray */
-  border: none;
-  padding: 5px 10px;
-  border-radius: 3px;
-  cursor: pointer;
-  margin-top: 10px;
-  font-family: "Montserrat", sans-serif;
+  background-color: #0d98ff; /* Electric blue */
+  color: #1e1e1e; 
+}
+
+.nav__item {
+  display: inline-block; 
+  margin-right: 40px;
+  font-family: "Roboto", sans-serif; 
+  color: #0d98ff; 
+  text-decoration: none; 
+  transition: color 0.3s; 
+  position: relative;
+  padding: 20px 40px; 
+  border-radius: 20px;
+  border: 2px solid transparent;
+  overflow: hidden;
+}
+
+.nav__item:hover {
+  color: #ff00ff; /* Electric purple */
+  border-color: #ff00ff; /* Electric purple */
+}
+
+.nav__item::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(45deg, #0d98ff, #ff00ff);
+  transform: translateX(-100%);
+  transition: transform 0.3s;
+}
+
+.nav__item:hover::after {
+  transform: translateX(100%);
 }
