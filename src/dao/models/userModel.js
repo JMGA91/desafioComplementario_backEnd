@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { createHash } from "../../utils/functionUtil.js";
 
 const usersCollection = "users";
 
@@ -30,6 +31,10 @@ const usersSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "carts",
   },
+});
+
+usersSchema.pre("save", function () {
+  this.password = createHash(this.password);
 });
 
 export const userModel = mongoose.model(usersCollection, usersSchema);

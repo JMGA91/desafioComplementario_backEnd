@@ -1,4 +1,6 @@
 import { userModel } from "../dao/models/userModel.js";
+import { isValidPassword } from "../utils/functionUtil.js";
+import jwt from "jsonwebtoken";
 
 export default class userManagerDB {
   async getUsers() {
@@ -25,6 +27,24 @@ export default class userManagerDB {
       return result;
     } catch (error) {
       console.error(error);
+    }
+  }
+ 
+  async loginUser(email, password) {
+    if (!email || !password) {
+      throw new Error("Invalid credentials!");
+    }
+    try {
+      const user = await userModel.findOne({ email }).lean();
+      if (!user) throw new Error("Invalid user!");
+      if (isValidPassword(user, password)) {
+        const token = jwt.sign(user, "secretKey", { expiresIn: "1h" });
+        return { token, user };
+      } else {
+        throw new Error("Invalid Password!");
+      }
+    } catch (error) {
+      throw new Error("Login Error!");
     }
   }
 

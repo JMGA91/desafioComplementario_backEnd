@@ -2,6 +2,7 @@ import { Router } from "express";
 import { productManagerDB } from "../dao/productManagerDB.js";
 import messageManagerDB from "../dao/messageManagerDB.js";
 import cartManagerDB from "../dao/cartManagerDB.js";
+import passport from "passport";
 import { auth } from "../middlewares/auth.js";
 import { userModel } from "../dao/models/userModel.js";
 
@@ -39,10 +40,9 @@ router.get("/register", (req, res) => {
   });
 });
 
-router.get("/user", auth, async (req, res) => {
-  try {
-    const userId = req.session.user._id;
-    const user = await userModel.findById(userId).populate("cart").lean();
+router.get("/user", passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
     res.render("user", {
       title: "FlameShop | Usuario",
       style: "index.css",

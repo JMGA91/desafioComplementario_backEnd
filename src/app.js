@@ -14,6 +14,7 @@ import passport from "passport";
 import initializatePassport from "./config/passportConfig.js";
 import sessionRouter from "./routes/sessionRouter.js";
 import * as dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 
 dotenv.config({ path: "./src/mongo.env" });
 
@@ -41,6 +42,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use("/js", express.static(__dirname + "/path/to/js"));
+app.use(cookieParser());
 
 //Passport
 initializatePassport();
