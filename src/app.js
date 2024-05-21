@@ -16,7 +16,7 @@ import sessionRouter from "./routes/sessionRouter.js";
 import * as dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 
-dotenv.config({ path: "./src/mongo.env" });
+dotenv.config();
 
 const app = express();
 const uri = process.env.URI;

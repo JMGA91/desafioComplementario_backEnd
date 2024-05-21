@@ -3,6 +3,7 @@ import { productManagerDB } from "../dao/productManagerDB.js";
 import messageManagerDB from "../dao/messageManagerDB.js";
 import cartManagerDB from "../dao/cartManagerDB.js";
 import passport from "passport";
+import { authToken } from "../utils/utils.js";
 import { auth } from "../middlewares/auth.js";
 import { userModel } from "../dao/models/userModel.js";
 
@@ -18,7 +19,7 @@ router.get("/", (req, res) => {
 });
 
 router.get("/login", async (req, res) => {
-  if (req.session.user) {
+  if (req.cookies.user) {
     res.redirect("/user");
   } else {
     res.render("login", {
@@ -30,7 +31,7 @@ router.get("/login", async (req, res) => {
 });
 
 router.get("/register", (req, res) => {
-  if (req.session.user) {
+  if (req.cookies.user) {
     res.redirect("/user");
   }
   res.render("register", {
@@ -46,7 +47,7 @@ router.get("/user", passport.authenticate("jwt", { session: false }),
     res.render("user", {
       title: "FlameShop | Usuario",
       style: "index.css",
-      user: req.session.user,
+      user: req.user.user,
       cart: user.cart?.products || [],
     });
   } catch (error) {
@@ -87,7 +88,7 @@ router.get("/chat", async (req, res) => {
   }
 });
 
-router.get("/cart", auth, async (req, res) => {
+router.get("/cart", authToken, async (req, res) => {
   const cartId = req.query.cid;
   try {
     const cart = await cartManagerService.getProductsFromCartByID(cartId);
