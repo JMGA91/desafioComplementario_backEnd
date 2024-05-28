@@ -21,9 +21,11 @@ dotenv.config();
 const app = express();
 const uri = process.env.URI;
 
+console.log("URI from env:", uri);
+
 const conexion = async () => {
   try {
-    await mongoose.connect(uri, { dbName: "products" });
+    await mongoose.connect(uri, { dbName: "products", useNewUrlParser: true, useUnifiedTopology: true });
     console.log("Connected to MongoDB Atlas");
   } catch (error) {
     console.error("Failed to connect to MongoDB Atlas:", error.message);
@@ -32,7 +34,7 @@ const conexion = async () => {
 
 conexion();
 
-//Handlebars Config
+// Handlebars Config
 app.engine("handlebars", handlebars.engine());
 app.set("views", __dirname + "/../views");
 app.set("view engine", "handlebars");
@@ -51,12 +53,13 @@ app.use(
       mongoUrl: uri,
       ttl: 20,
     }),
-    secret: "secretPhrase",
+    secret: process.env.SECRET_KEY || "secretPhrase",
     resave: true,
     saveUninitialized: true,
   })
 );
-//Passport
+
+// Passport
 initializatePassport();
 app.use(passport.initialize());
 app.use(passport.session());

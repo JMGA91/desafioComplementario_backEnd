@@ -3,6 +3,7 @@ import userManagerDB from "../controllers/userController.js";
 import passport from "passport";
 import { generateToken } from "../utils/utils.js";
 import { isValidPassword } from "../utils/functionUtil.js";
+import { auth } from "../middlewares/auth.js";
 
 const sessionRouter = Router();
 const userManagerService = new userManagerDB();
@@ -90,11 +91,10 @@ sessionRouter.get("/current", passport.authenticate("jwt", { session: false }),
   }
 );
 
-sessionRouter.get("/:uid",
-  
+sessionRouter.get(
+  "/:uid",
   passport.authenticate("jwt", { session: false }),
-
-  auth("Admin"),
+  auth("admin"),
   async (req, res) => {
     try {
       const result = await userManagerService.getUsers(req.params.uid);

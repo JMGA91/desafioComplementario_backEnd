@@ -2,7 +2,6 @@ import { Router } from "express";
 import productController from "../controllers/productController.js";
 import messageController from "../controllers/messageController.js";
 import cartController from "../controllers/cartController.js";
-import { authToken } from "../utils/utils.js";
 import passport from "passport";
 import { authToken } from "../utils/utils.js";
 import { auth } from "../middlewares/auth.js";
@@ -48,7 +47,7 @@ router.get("/user", passport.authenticate("jwt", { session: false }),
       title: "FlameShop | Usuario",
       style: "index.css",
       user: req.user.user,
-      cart: user.cart?.products || [],
+      cart:[],
     });
   } catch (error) {
     console.error(error);
