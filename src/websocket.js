@@ -1,10 +1,10 @@
-import { productManagerDB } from "./dao/productManagerDB.js";
-import userManagerDB from "./dao/userManagerDB.js";
-import cartManagerDB from "./dao/cartManagerDB.js";
+import productController from "./controllers/productController.js";
+import userManagerDB from "./controllers/userController.js";
+import cartController from "./controllers/cartController.js";
 
 const UserManager = new userManagerDB();
-const ProductService = new productManagerDB();
-const CartManager = new cartManagerDB();
+const ProductService = new productController();
+const CartManager = new cartController();
 
 export default (io) => {
   io.on("connection", (socket) => {

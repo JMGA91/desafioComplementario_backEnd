@@ -1,5 +1,5 @@
 import { Router } from "express";
-import userManagerDB from "../dao/userManagerDB.js";
+import userManagerDB from "../controllers/userController.js";
 import passport from "passport";
 import { generateToken } from "../utils/utils.js";
 import { isValidPassword } from "../utils/functionUtil.js";
@@ -57,14 +57,8 @@ sessionRouter.get("/failLogin", (_req, res) => {
   });
 });
 
-sessionRouter.get("/github", 
-passport.authenticate("github", { scope: ["user:email"] }),
-  (_req, res) => {
-    res.send({
-      status: "success",
-      message: "Success",
-    });
-  }
+sessionRouter.get("/github",
+  passport.authenticate("github", { scope: ["user:email"] })
 );
 
 sessionRouter.get("/githubcallback", 
@@ -93,6 +87,27 @@ sessionRouter.get("/current", passport.authenticate("jwt", { session: false }),
     res.send({
       user: req.user,
     });
+  }
+);
+
+sessionRouter.get("/:uid",
+  
+  passport.authenticate("jwt", { session: false }),
+
+  auth("Admin"),
+  async (req, res) => {
+    try {
+      const result = await userManagerService.getUsers(req.params.uid);
+      res.send({
+        status: "success",
+        payload: result,
+      });
+    } catch (error) {
+      res.status(400).send({
+        status: "error",
+        message: error.message,
+      });
+    }
   }
 );
 

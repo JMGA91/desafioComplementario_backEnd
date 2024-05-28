@@ -1,9 +1,8 @@
-import productModel from "./models/productModel.js";
+import productModel from "../models/productModel.js";
 
-class productManagerDB {
+class ProductController {
   async getAllProducts(limit, page, query, sort) {
     try {
-
       return await productModel.paginate(query ?? {}, {
         page: page ?? 1,
         limit: limit ?? 100,
@@ -12,17 +11,19 @@ class productManagerDB {
       });
     } catch (error) {
       console.error(error.message);
-      throw new Error("Error al buscar los productos");
+      throw new Error("Error fetching products");
     }
   }
 
   async getProductByID(pid) {
-
-    const product = await productModel.findOne({ _id: pid });
-
-    if (!product) throw new Error(`El producto ${pid} no existe!`);
-
-    return product;
+    try {
+      const product = await productModel.findOne({ _id: pid });
+      if (!product) throw new Error(`Product with ID ${pid} does not exist!`);
+      return product;
+    } catch (error) {
+      console.error(error.message);
+      throw new Error("Error fetching product");
+    }
   }
 
   async createProduct(product) {
@@ -30,7 +31,7 @@ class productManagerDB {
       product;
 
     if (!title || !description || !code || !price || !stock || !category) {
-      throw new Error("Error al crear el producto");
+      throw new Error("Error creating product");
     }
 
     try {
@@ -46,34 +47,31 @@ class productManagerDB {
       return result;
     } catch (error) {
       console.error(error.message);
-      throw new Error("Error al crear el producto");
+      throw new Error("Error creating product");
     }
   }
 
   async updateProduct(pid, productUpdate) {
     try {
       const result = await productModel.updateOne({ _id: pid }, productUpdate);
-
       return result;
     } catch (error) {
       console.error(error.message);
-      throw new Error("Error al actualizar el producto");
+      throw new Error("Error updating product");
     }
   }
 
   async deleteProduct(pid) {
     try {
       const result = await productModel.deleteOne({ _id: pid });
-
       if (result.deletedCount === 0)
-        throw new Error(`El producto ${pid} no existe!`);
-
+        throw new Error(`Product with ID ${pid} does not exist!`);
       return result;
     } catch (error) {
       console.error(error.message);
-      throw new Error(`Error al eliminar el producto ${pid}`);
+      throw new Error(`Error deleting product ${pid}`);
     }
   }
 }
 
-export { productManagerDB };
+export default ProductController;

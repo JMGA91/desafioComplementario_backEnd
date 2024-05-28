@@ -1,9 +1,9 @@
-import { cartModel } from "./models/cartModel.js";
+import cartService from "../services/cartService.js";
 
-class cartManagerDB {
+class cartController {
   async getAllCarts() {
     try {
-      return await cartModel.find();
+      return await cartService.find();
     } catch (error) {
       console.error(error.message);
       throw new Error("Error fetching carts");
@@ -12,7 +12,7 @@ class cartManagerDB {
 
   async createCart() {
     try {
-      const newCart = await cartModel.create({ products: [] });
+      const newCart = await cartService.create({ products: [] });
       return newCart;
     } catch (error) {
       console.error(error.message);
@@ -22,7 +22,7 @@ class cartManagerDB {
 
   async getProductsFromCartByID(cid) {
     try {
-      const cart = await cartModel
+      const cart = await cartService
         .findById(cid)
         .populate("products.product")
         .lean();
@@ -36,7 +36,7 @@ class cartManagerDB {
 
   async addProductToCart(cartid, productId, quantity = 1) {
     try {
-      const cart = await cartModel.findOne({ _id: cartid });
+      const cart = await cartService.findOne({ _id: cartid });
       if (!cart) throw new Error(`Cart with ID ${cartid} not found`);
 
       const existingProduct = cart.products.find(
@@ -58,7 +58,7 @@ class cartManagerDB {
 
   async updateProductQuantity(cartId, productId, quantity) {
     try {
-      return await cartModel.updateOne(
+      return await cartService.updateOne(
         { _id: cartId, "products.product": productId },
         { $set: { "products.$.quantity": quantity } }
       );
@@ -79,7 +79,7 @@ class cartManagerDB {
 
   async deleteAllProductsFromCart(cartId) {
     try {
-      return await cartModel.findByIdAndUpdate(cartId, { products: [] });
+      return await cartService.findByIdAndUpdate(cartId, { products: [] });
     } catch (error) {
       console.error(error.message);
       throw new Error("Error deleting all products from cart");
@@ -88,7 +88,7 @@ class cartManagerDB {
 
   async deleteProductFromCart(cartId, productId) {
     try {
-      return await cartModel.findOneAndUpdate(
+      return await cartService.findOneAndUpdate(
         { _id: cartId },
         { $pull: { products: { product: productId } } }
       );
@@ -99,4 +99,4 @@ class cartManagerDB {
   }
 }
 
-export default cartManagerDB;
+export default cartController;

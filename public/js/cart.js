@@ -47,7 +47,7 @@ const initCart = () => {
   addToCartButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const productId = button.dataset.productId;
-      const quantity = 1; // You can adjust this based on user input if needed
+      const quantity = 1; 
       addToCart(productId, quantity);
     });
   });
@@ -58,5 +58,4 @@ const initCart = () => {
   });
 };
 
-// Call initCart() when the DOM is fully loaded
 document.addEventListener("DOMContentLoaded", initCart);

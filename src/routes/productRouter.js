@@ -1,12 +1,10 @@
 import { Router } from "express";
-//import { productManagerFS } from '../dao/productManagerFS.js';
-import { productManagerDB } from "../dao/productManagerDB.js";
+import ProductController from "../controllers/productController.js";
 import { uploader } from "../utils/multerUtil.js";
-import productModel from "../dao/models/productModel.js";
+import productModel from "../models/productModel.js";
 
 const router = Router();
-//const ProductService = new productManagerFS('products.json');
-const productManagerService = new productManagerDB();
+const productManagerService = new ProductController();
 
 router.get("/", async (req, res) => {
   try {

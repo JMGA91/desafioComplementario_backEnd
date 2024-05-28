@@ -19,7 +19,7 @@ const authToken = (req, res, next) => {
     });
   }
 
-  const token = authHeader().split(" ")[0];
+  const token = authHeader().split(" ")[1];
   jwt.verify(token, secretKey, (error, credentials) => {
     if (error) {
       return res.status(403).send({

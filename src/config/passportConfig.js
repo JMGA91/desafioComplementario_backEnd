@@ -1,14 +1,15 @@
 import passport from "passport";
 import GitHubStrategy from "passport-github2";
-import jwt from "passport-jwt";
-import { userModel } from "../dao/models/userModel.js";
-import userManagerDB from "../dao/userManagerDB.js";
-import cartManagerDB from "../dao/cartManagerDB.js";
+import jwt, { ExtractJwt } from "passport-jwt";
+import { userModel } from "../models/userModel.js";
+import userController from "../controllers/userController.js";
+import cartController from "../controllers/cartController.js";
 import * as dotenv from "dotenv";
+
 dotenv.config();
 
-const userManagerService = new userManagerDB();
-const cartManagerService = new cartManagerDB();
+const userManagerService = new userController();
+const cartManagerService = new cartController();
 
 const { Strategy: JWTStrategy, ExtractJwt } = jwt;
 

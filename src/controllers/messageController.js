@@ -1,6 +1,6 @@
-import MessageModel from "./models/messageModel.js";
+import MessageModel from "../models/messageModel.js";
 
-class MessageManagerDB {
+class messageController {
   async getAllMessages() {
     try {
       return await MessageModel.find().lean();
@@ -16,11 +16,11 @@ class MessageManagerDB {
       return newMessage.toObject();
     } catch (error) {
       console.error(error.message);
-      throw new Error("Error creating new message");
+      throw new Error("Error creating message");
     }
   }
 }
 
-const messagemanager = new MessageManagerDB();
+const messagecontroller = new messageController();
 
-export default messagemanager;
+export default messagecontroller;

@@ -1,15 +1,15 @@
 import { Router } from "express";
-import { productManagerDB } from "../dao/productManagerDB.js";
-import messageManagerDB from "../dao/messageManagerDB.js";
-import cartManagerDB from "../dao/cartManagerDB.js";
+import productController from "../controllers/productController.js";
+import messageController from "../controllers/messageController.js";
+import cartController from "../controllers/cartController.js";
+import { authToken } from "../utils/utils.js";
 import passport from "passport";
 import { authToken } from "../utils/utils.js";
 import { auth } from "../middlewares/auth.js";
-import { userModel } from "../dao/models/userModel.js";
 
 const router = Router();
-const productManagerService = new productManagerDB();
-const cartManagerService = new cartManagerDB();
+const productManagerService = new productController();
+const cartManagerService = new cartController();
 
 router.get("/", (req, res) => {
   res.render("home", {
@@ -19,7 +19,7 @@ router.get("/", (req, res) => {
 });
 
 router.get("/login", async (req, res) => {
-  if (req.cookies.user) {
+  if (req.cookies.auth) {
     res.redirect("/user");
   } else {
     res.render("login", {
@@ -31,7 +31,7 @@ router.get("/login", async (req, res) => {
 });
 
 router.get("/register", (req, res) => {
-  if (req.cookies.user) {
+  if (req.cookies.auth) {
     res.redirect("/user");
   }
   res.render("register", {
@@ -66,17 +66,34 @@ router.get("/products", async (req, res) => {
   });
 });
 
-router.get("/realtimeproducts", async (req, res) => {
-  res.render("realTimeProducts", {
-    title: "Productos",
-    style: "index.css",
-    products: await productManagerService.getAllProducts(),
-  });
-});
+router.get(
+  "/realtimeproducts",
+  passport.authenticate("jwt", { session: false }),
+  auth("Admin"),
+  async (req, res) => {
+    try {
+      const products = await productManagerService.getAllProducts();
+      res.render("realTimeProducts", {
+
+        title: "Productos",
+
+        style: "index.css",
+
+        products,
+
+      });
+    } catch (error) {
+      res.status(403).send({
+        status: "error",
+        message: "Forbidden",
+      });
+    }
+  }
+);
 
 router.get("/chat", async (req, res) => {
   try {
-    const messages = await messageManagerDB.getAllMessages();
+    const messages = await messageController.getAllMessages();
     res.render("messageService", {
       title: "Chat",
       style: "index.css",
@@ -104,5 +121,20 @@ router.get("/cart", authToken, async (req, res) => {
     res.redirect("/error");
   }
 });
+
+// Unauthorized route
+
+router.get("/unauthorized", (req, res) => {
+
+  res.status(401).render("unauthorized", {
+
+    title: "Unauthorized",
+
+    style: "index.css",
+
+  });
+
+});
+
 
 export default router;
