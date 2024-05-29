@@ -13,19 +13,17 @@ import usersRouter from "./routes/usersRouter.js";
 import passport from "passport";
 import initializatePassport from "./config/passportConfig.js";
 import sessionRouter from "./routes/sessionRouter.js";
-import * as dotenv from "dotenv";
+import * as dotenv from "dotenv"; 
 import cookieParser from "cookie-parser";
 
-dotenv.config();
+dotenv.config({ path: "./src/mongo.env" });
 
 const app = express();
 const uri = process.env.URI;
 
-console.log("URI from env:", uri);
-
 const conexion = async () => {
   try {
-    await mongoose.connect(uri, { dbName: "products", useNewUrlParser: true, useUnifiedTopology: true });
+    await mongoose.connect(uri, { dbName: "products" });
     console.log("Connected to MongoDB Atlas");
   } catch (error) {
     console.error("Failed to connect to MongoDB Atlas:", error.message);
@@ -34,7 +32,7 @@ const conexion = async () => {
 
 conexion();
 
-// Handlebars Config
+//Handlebars Config
 app.engine("handlebars", handlebars.engine());
 app.set("views", __dirname + "/../views");
 app.set("view engine", "handlebars");
@@ -50,7 +48,7 @@ app.use(cookieParser());
 app.use(
   session({
     store: mongoStore.create({
-      mongoUrl: uri,
+      mongoUrl: uri, // uri es la variable que contiene la URL de conexión a MongoDB
       ttl: 20,
     }),
     secret: process.env.SECRET_KEY || "secretPhrase",
@@ -58,8 +56,7 @@ app.use(
     saveUninitialized: true,
   })
 );
-
-// Passport
+//Passport
 initializatePassport();
 app.use(passport.initialize());
 app.use(passport.session());
