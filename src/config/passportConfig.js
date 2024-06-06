@@ -3,12 +3,12 @@ import GitHubStrategy from "passport-github2";
 import jwt, { ExtractJwt } from "passport-jwt";
 import { userModel } from "../models/userModel.js";
 import userController from "../controllers/userController.js";
-import cartController from "../controllers/cartController.js";
+import cartController from "../repository/cartRepository.js";
 import * as dotenv from "dotenv";
 dotenv.config();
 
-const userManagerService = new userController();
-const cartManagerService = new cartController();
+const userControllerDB = new userController();
+const cartControllerDB = new cartController();
 
 const JWTStrategy = jwt.Strategy;
 
@@ -21,7 +21,7 @@ const cookieExtractor = (req) => {
 };
 
 const initializePassport = () => {
-  const Cliend_Id = process.env.CLIENT_ID;
+  const Client_Id = process.env.CLIENT_ID;
   const Secret_Id = process.env.SECRET_ID;
   const secretKey = process.env.SECRET_KEY;
 
@@ -46,51 +46,61 @@ const initializePassport = () => {
     "github",
     new GitHubStrategy(
       {
-        clientID: Cliend_Id,
+        clientID: Client_Id,
         clientSecret: Secret_Id,
         callbackURL: "http://localhost:8080/api/session/githubcallback",
       },
       async (_accessToken, _refreshToken, profile, done) => {
         try {
-          const user = await userModel.findOne({
-            email: profile._json.email,
-          });
-          console.log(profile);
+          const email = profile._json.email || profile.profileUrl;
+          console.log("GitHub Profile:", profile);
+
+          let user = await userModel.findOne({ email });
+          console.log("Already an existing User:", user);
+
           if (!user) {
             const newUser = {
-              id: profile._id,
+              id: profile.id,
               username: profile._json.login,
               firstName: profile._json.name,
-              email: profile._json.email,
+              email: email,
               role: "user",
             };
 
-            const registeredUser = await userManagerService.registerUser(
-              newUser
-            );
-            const cart = await cartManagerService.createCart(
-              registeredUser._id
-            );
-            const result = await userManagerService.updateUser(
+            console.log("Creating new user:", newUser);
+
+            const registeredUser = await userControllerDB.registerUser(newUser);
+            const cart = await cartControllerDB.createCart(registeredUser._id);
+            const updatedUser = await userControllerDB.updateUser(
               registeredUser._id,
-              cart._id
+              { cartId: cart._id }
             );
-            done(null, result);
-          } else {
-            done(null, user);
+
+            console.log("Registered User:", updatedUser);
+            user = updatedUser;
           }
+
+          done(null, user);
         } catch (error) {
-          return done(null, user);
+          console.error("Error in GitHub Strategy:", error);
+          done(error);
         }
       }
     )
   );
 
-  passport.serializeUser((user, done) => done(null, user._id));
+  passport.serializeUser((user, done) => {
+    done(null, user._id);
+  });
 
   passport.deserializeUser(async (id, done) => {
-    const user = await userModel.findById(id);
-    done(null, user);
+    try {
+      const user = await userModel.findById(id);
+      console.log("Deserialized User:", user);
+      done(null, user);
+    } catch (error) {
+      done(error);
+    }
   });
 };
 

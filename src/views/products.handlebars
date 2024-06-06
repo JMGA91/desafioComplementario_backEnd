@@ -30,7 +30,8 @@
           <p>Descripción: {{this.description}}</p>
           <p>Precio: $ {{this.price}}</p>
           <button
-            onclick="addToCart('{{this._id}}', '{{user.cid}}')"
+            data-product-id="{{this._id}}"
+            data-cart-id="{{../user}}"
             class="add-to-cart-button"
           >Add to Cart</button>
         </div>
@@ -47,3 +48,5 @@
   </div>
 
 </div>
+
+<script src="/js/products.js"></script>

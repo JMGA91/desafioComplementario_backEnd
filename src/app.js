@@ -15,6 +15,7 @@ import initializatePassport from "./config/passportConfig.js";
 import sessionRouter from "./routes/sessionRouter.js";
 import * as dotenv from "dotenv"; 
 import cookieParser from "cookie-parser";
+import ticketRouter from "./routes/ticketRouter.js";
 
 dotenv.config({ path: "./src/mongo.env" });
 
@@ -62,6 +63,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routers
+app.use("/api/ticket", ticketRouter);
 app.use("/api/session", sessionRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/products", productRouter);

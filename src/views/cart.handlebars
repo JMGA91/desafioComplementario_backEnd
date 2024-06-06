@@ -2,7 +2,7 @@
   <nav>
     <ul class="nav_list">
       <li class="nav__item">
-        <a class="nav_link" href="/products/">Products</a>
+        <a class="nav_link" href="/products/">products</a>
       </li>
       <li class="nav__item">
         <a class="nav_link" href="/realtimeproducts">Post</a>
@@ -11,7 +11,7 @@
         <a class="nav_link" href="/chat">Help!</a>
       </li>
       <li class="nav__item">
-        <a class="nav_link" href="/cart?cid={{user.cart}}">Cart</a>
+        <a class="nav_link" href="/cart">Cart</a>
       </li>
       <li class="nav__item">
         <a class="nav_link" href="/api/session/logout">Logout</a>
@@ -36,7 +36,11 @@
             <p class="item-quantity">Quantity: {{this.quantity}}</p>
           </div>
           <div class="item-actions">
-            <button class="remove-item">Remove</button>
+            <button
+              class="remove-item"
+              data-product-id="{{this.product._id}}"
+              data-cart-id="{{../cartId}}"
+            >Remove</button>
           </div>
         </div>
       {{/each}}
@@ -45,11 +49,20 @@
       <p>Total: ${{totalPrice}}</p>
     </div>
     <div class="cart-actions">
-      <button class="checkout-btn">Checkout</button>
-      <button class="clear-cart-btn">Clear Cart</button>
+      <button class="checkout-btn" data-cart-id="{{cartId}}">Checkout</button>
+      <button class="clear-cart-btn" data-cart-id="{{cartId}}">Clear Cart</button>
+    </div>
+    <div class="paginate">
+      {{#if products.prevPage}}
+        <a href="/cart?page={{products.prevPage}}" class="prev">previous</a>
+      {{/if}}
+      {{#if products.nextPage}}
+        <a href="/cart?page={{products.nextPage}}" class="next">next</a>
+      {{/if}}
     </div>
   </div>
 </div>
+
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/cart.js"></script>

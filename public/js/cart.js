@@ -1,61 +1,67 @@
-// Establish socket connection
-const socket = io();
-
-// Function to fetch cart data from the server and render it
-const renderCart = async () => {
-  try {
-    const response = await fetch("/api/carts/:cid"); // Adjust the endpoint if necessary
-    if (!response.ok) {
-      throw new Error("Failed to fetch cart data");
-    }
-    const cart = await response.json();
-
-    // Render the cart HTML using the received data
-    // Code to dynamically update the cart HTML
-  } catch (error) {
-    console.error("Error fetching cart data:", error);
-  }
-};
-
-// Function to handle adding items to the cart
-const addToCart = async (productId, quantity) => {
-  try {
-    const response = await fetch(`/api/carts/:cid/products/${productId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ quantity }),
-    });
-    if (!response.ok) {
-      throw new Error("Failed to add item to cart");
-    }
-    // Refresh the cart after adding item
-    renderCart();
-  } catch (error) {
-    console.error("Error adding item to cart:", error);
-  }
-};
-
-// Function to initialize cart functionality
-const initCart = () => {
-  // Call renderCart() to render cart data initially
-  renderCart();
-
-  // Add event listener to handle adding items to cart
-  const addToCartButtons = document.querySelectorAll(".add-to-cart");
-  addToCartButtons.forEach((button) => {
-    button.addEventListener("click", () => {
+document.addEventListener("DOMContentLoaded", () => {
+  // Remove item from cart
+  const removeButtons = document.querySelectorAll(".remove-item");
+  
+  removeButtons.forEach((button) => {
+    button.addEventListener("click", async () => {
       const productId = button.dataset.productId;
-      const quantity = 1; 
-      addToCart(productId, quantity);
+      const cartId = button.dataset.cartId;
+
+      try {
+        const response = await fetch(
+          `/api/cart/${cartId}/products/${productId}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          alert("Product removed from cart successfully");
+          location.reload(); // Refresh the page to update the cart view
+        } else {
+          const result = await response.json();
+          alert(`Error removing product from cart: ${result.message}`);
+        }
+      } catch (error) {
+        console.error("Error removing product from cart:", error);
+        alert("There was an error removing the product from the cart");
+      }
     });
   });
 
-  // Socket.io event listeners for real-time updates
-  socket.on("cart_updated", () => {
-    renderCart();
-  });
-};
+  // Clear cart
+  const clearCartButton = document.querySelector(".clear-cart-btn");
+  clearCartButton.addEventListener("click", async () => {
+    const cartId = clearCartButton.dataset.cartId;
 
-document.addEventListener("DOMContentLoaded", initCart);
+    try {
+      const response = await fetch(`/api/cart/${cartId}/products`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        alert("Cart cleared successfully");
+        location.reload(); // Refresh the page to update the cart view
+      } else {
+        const result = await response.json();
+        alert(`Error clearing cart: ${result.message}`);
+      }
+    } catch (error) {
+      console.error("Error clearing cart:", error);
+      alert("There was an error clearing the cart");
+    }
+  });
+
+  // Checkout
+  const checkoutButton = document.querySelector(".checkout-btn");
+  checkoutButton.addEventListener("click", () => {
+    alert("Checkout functionality not implemented yet.");
+    
+  });
+});

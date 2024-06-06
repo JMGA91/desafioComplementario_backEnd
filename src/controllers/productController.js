@@ -1,14 +1,9 @@
-import productModel from "../models/productModel.js";
+import productRepository from "../repository/productRepository.js";
 
 class ProductController {
   async getAllProducts(limit, page, query, sort) {
     try {
-      return await productModel.paginate(query ?? {}, {
-        page: page ?? 1,
-        limit: limit ?? 100,
-        sort,
-        lean: true,
-      });
+      return await productRepository.getAllProducts(limit, page, query, sort);
     } catch (error) {
       console.error(error.message);
       throw new Error("Error fetching products");
@@ -17,9 +12,7 @@ class ProductController {
 
   async getProductByID(pid) {
     try {
-      const product = await productModel.findOne({ _id: pid });
-      if (!product) throw new Error(`Product with ID ${pid} does not exist!`);
-      return product;
+      return await productRepository.getProductByID(pid);
     } catch (error) {
       console.error(error.message);
       throw new Error("Error fetching product");
@@ -27,24 +20,8 @@ class ProductController {
   }
 
   async createProduct(product) {
-    const { title, description, code, price, stock, category, thumbnails } =
-      product;
-
-    if (!title || !description || !code || !price || !stock || !category) {
-      throw new Error("Error creating product");
-    }
-
     try {
-      const result = await productModel.create({
-        title,
-        description,
-        code,
-        price,
-        stock,
-        category,
-        thumbnails: thumbnails ?? [],
-      });
-      return result;
+      return await productRepository.createProduct(product);
     } catch (error) {
       console.error(error.message);
       throw new Error("Error creating product");
@@ -53,8 +30,7 @@ class ProductController {
 
   async updateProduct(pid, productUpdate) {
     try {
-      const result = await productModel.updateOne({ _id: pid }, productUpdate);
-      return result;
+      return await productRepository.updateProduct(pid, productUpdate);
     } catch (error) {
       console.error(error.message);
       throw new Error("Error updating product");
@@ -63,10 +39,7 @@ class ProductController {
 
   async deleteProduct(pid) {
     try {
-      const result = await productModel.deleteOne({ _id: pid });
-      if (result.deletedCount === 0)
-        throw new Error(`Product with ID ${pid} does not exist!`);
-      return result;
+      return await productRepository.deleteProduct(pid);
     } catch (error) {
       console.error(error.message);
       throw new Error(`Error deleting product ${pid}`);

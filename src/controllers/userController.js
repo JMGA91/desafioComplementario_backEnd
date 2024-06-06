@@ -1,4 +1,5 @@
 import userService from "../services/userService.js";
+import UserDTO from "../dao/DTOs/userDto.js";
 
 export default class UserController {
   async getUsers() {
@@ -10,8 +11,9 @@ export default class UserController {
   }
 
   async registerUser(user) {
+    const newUser = new UserDTO(user);
     try {
-      return await userService.registerUser(user);
+      return await userService.registerUser(newUser);
     } catch (error) {
       console.error(error);
     }

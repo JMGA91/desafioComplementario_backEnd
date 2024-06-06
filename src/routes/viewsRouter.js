@@ -1,18 +1,19 @@
 import { Router } from "express";
 import productController from "../controllers/productController.js";
 import messageController from "../controllers/messageController.js";
-import cartController from "../controllers/cartController.js";
-import passport from "passport";
+import cartController from "../repository/cartRepository.js";
+import userRepository from "../repository/userRepository.js";
 import { authToken } from "../utils/utils.js";
+import passport from "passport";
 import { auth } from "../middlewares/auth.js";
 
 const router = Router();
-const productManagerService = new productController();
-const cartManagerService = new cartController();
+const productControllerDB = new productController();
+const cartControllerDB = new cartController();
 
 router.get("/", (req, res) => {
   res.render("home", {
-    title: "FlameShop | Home",
+    title: "Flameshop | Home",
     style: "index.css",
   });
 });
@@ -22,7 +23,7 @@ router.get("/login", async (req, res) => {
     res.redirect("/user");
   } else {
     res.render("login", {
-      title: "FlameShop | Login",
+      title: "Flameshop | Login",
       style: "index.css",
       failLogin: req.session.failLogin ?? false,
     });
@@ -34,52 +35,43 @@ router.get("/register", (req, res) => {
     res.redirect("/user");
   }
   res.render("register", {
-    title: "FlameShop | Register",
+    title: "Flameshop | Register",
     style: "index.css",
     failRegister: req.session.failRegister ?? false,
   });
 });
 
-router.get("/user", passport.authenticate("jwt", { session: false }),
+router.get(
+  "/user",
+  passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
-    res.render("user", {
-      title: "FlameShop | Usuario",
-      style: "index.css",
-      user: req.user.user,
-      cart:[],
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
+      res.render("user", {
+        title: "Flameshop | Usuario",
+        style: "index.css",
+        user: req.user.user,
+        cart: [],
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
   }
-});
-
-router.get("/products", async (req, res) => {
-  let { limit = 5, page = 1 } = req.query;
-
-  res.render("products", {
-    title: "Productos",
-    style: "index.css",
-    products: await productManagerService.getAllProducts(limit, page),
-  });
-});
+);
 
 router.get(
-  "/realtimeproducts",
+  "/products",
   passport.authenticate("jwt", { session: false }),
-  auth("Admin"),
+  auth("user"),
   async (req, res) => {
+    let { limit = 5, page = 1 } = req.query;
+    console.log(await userRepository.findUserById(req.user.user._id));
     try {
-      const products = await productManagerService.getAllProducts();
-      res.render("realTimeProducts", {
-
+      res.render("products", {
         title: "Productos",
-
         style: "index.css",
-
-        products,
-
+        user: await userRepository.findUserById(req.user.user._id),
+        products: await productControllerDB.getAllProducts(limit, page),
       });
     } catch (error) {
       res.status(403).send({
@@ -90,50 +82,73 @@ router.get(
   }
 );
 
-router.get("/chat", async (req, res) => {
-  try {
-    const messages = await messageController.getAllMessages();
-    res.render("messageService", {
-      title: "Chat",
-      style: "index.css",
-      messages: messages,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
+router.get(
+  "/realtimeproducts",
+  passport.authenticate("jwt", { session: false }),
+  auth("admin"),
+  async (req, res) => {
+    try {
+      const products = await productControllerDB.getAllProducts();
+      res.render("realTimeProducts", {
+        title: "Productos",
+        style: "index.css",
+        products,
+      });
+    } catch (error) {
+      res.status(403).send({
+        status: "error",
+        message: "Forbidden",
+      });
+    }
   }
-});
+);
 
-router.get("/cart", authToken, async (req, res) => {
-  const cartId = req.query.cid;
-  try {
-    const cart = await cartManagerService.getProductsFromCartByID(cartId);
-    res.render("cart", {
-      title: "FlameShop | Cart",
-      style: "index.css",
-      cartId: cartId,
-      products: cart.products,
-      user: req.user,
-    });
-  } catch (error) {
-    console.error(error);
-    res.redirect("/error");
+router.get(
+  "/chat",
+  passport.authenticate("jwt", { session: false }),
+  auth("student"), // Only allow students
+  async (req, res) => {
+    try {
+      const messages = await messageController.getAllMessages();
+      res.render("messageService", {
+        title: "Chat",
+        style: "index.css",
+        messages: messages,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
   }
-});
+);
+
+router.get(
+  "/cart",
+  passport.authenticate("jwt", { session: false }), // Allow all authenticated users
+  async (req, res) => {
+    const cartId = req.query.cid;
+    try {
+      const cart = await cartControllerDB.getProductsFromCartByID(cartId);
+      res.render("cart", {
+        title: "Flameshop Cart",
+        style: "index.css",
+        cartId: cartId,
+        products: cart.products,
+        user: req.user,
+      });
+    } catch (error) {
+      console.error(error);
+      res.redirect("/error");
+    }
+  }
+);
 
 // Unauthorized route
-
 router.get("/unauthorized", (req, res) => {
-
   res.status(401).render("unauthorized", {
-
     title: "Unauthorized",
-
     style: "index.css",
-
   });
-
 });
-
 
 export default router;

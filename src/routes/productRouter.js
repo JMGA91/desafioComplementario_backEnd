@@ -4,12 +4,12 @@ import { uploader } from "../utils/multerUtil.js";
 import productModel from "../models/productModel.js";
 
 const router = Router();
-const productManagerService = new ProductController();
+const productControllerDB = new ProductController();
 
 router.get("/", async (req, res) => {
   try {
     let { limit = 10, page = 1, query = {}, sort = null } = req.query;
-    const result = await productManagerService.getAllProducts(
+    const result = await productControllerDB.getAllProducts(
       limit,
       page,
       query,
@@ -37,7 +37,7 @@ router.post("/", uploader.array("thumbnails", 3), async (req, res) => {
   }
 
   try {
-    const result = await productManagerService.createProduct(req.body);
+    const result = await productControllerDB.createProduct(req.body);
     res.send({
       status: "success",
       payload: result,
@@ -59,7 +59,7 @@ router.put("/:pid", uploader.array("thumbnails", 3), async (req, res) => {
   }
 
   try {
-    const result = await productManagerService.updateProduct(
+    const result = await productControllerDB.updateProduct(
       req.params.pid,
       req.body
     );
@@ -77,7 +77,7 @@ router.put("/:pid", uploader.array("thumbnails", 3), async (req, res) => {
 
 router.delete("/:pid", async (req, res) => {
   try {
-    const result = await productManagerService.deleteProduct(req.params.pid);
+    const result = await productControllerDB.deleteProduct(req.params.pid);
     res.send({
       status: "success",
       payload: result,
@@ -115,7 +115,7 @@ router.get("/search", async (req, res) => {
 
 router.get("/:pid", async (req, res) => {
   try {
-    const result = await productManagerService.getProductByID(req.params.pid);
+    const result = await productControllerDB.getProductByID(req.params.pid);
     res.send({
       status: "success",
       payload: result,

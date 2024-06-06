@@ -1,6 +1,6 @@
 import productController from "./controllers/productController.js";
 import userManagerDB from "./controllers/userController.js";
-import cartController from "./controllers/cartController.js";
+import cartController from "./repository/cartRepository.js";
 
 const UserManager = new userManagerDB();
 const ProductService = new productController();
