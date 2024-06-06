@@ -52,7 +52,7 @@ app.use(
       mongoUrl: uri, // uri es la variable que contiene la URL de conexión a MongoDB
       ttl: 20,
     }),
-    secret: process.env.SECRET_KEY || "secretPhrase",
+    secret:"secretPhrase",
     resave: true,
     saveUninitialized: true,
   })
