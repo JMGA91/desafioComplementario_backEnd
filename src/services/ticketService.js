@@ -1,23 +1,32 @@
-import ticketDao from "../dao/ticketDao.js";
+import TicketRepository from "../repository/ticketRepository.js";
 
-class TicketService {
+export default class TicketService {
+  constructor() {
+    this.ticketRepository = new TicketRepository();
+  }
+
   async getAllTickets(limit, page, query, sort) {
-    const options = { page: page ?? 1, limit: limit ?? 100, sort, lean: true };
-    return await ticketDao.getAllTickets(query ?? {}, options);
+    return await this.ticketRepository.getAllTickets(limit, page, query, sort);
   }
 
   async getTicketById(tid) {
-    return await ticketDao.getTicketById(tid);
+    return await this.ticketRepository.getTicketById(tid);
   }
 
   async getTicketsByUserId(userId) {
-    return await ticketDao.getTicketsByUserId(userId);
+    return await this.ticketRepository.getTicketsByUserId(userId);
   }
 
   async createTicket(ticket) {
-    return await ticketDao.createTicket(ticket);
+    return await this.ticketRepository.createTicket(ticket);
+  }
+
+  async generateTicketCode() {
+    try {
+      return await this.ticketRepository.generateTicketCode();
+    } catch (error) {
+      console.error(error.message);
+      throw new Error("Error generating ticket code");
+    }
   }
 }
-
-const ticketService = new TicketService();
-export default ticketService;

@@ -1,9 +1,8 @@
 <div class="container">
-
   <nav>
     <ul class="nav_list">
       <li class="nav__item">
-        <a class="nav_link" href="/products/">Products</a>
+        <a class="nav_link" href="/products/">products</a>
       </li>
       <li class="nav__item">
         <a class="nav_link" href="/realtimeproducts">Post</a>
@@ -11,8 +10,12 @@
       <li class="nav__item">
         <a class="nav_link" href="/chat">Help!</a>
       </li>
+      </li>
       <li class="nav__item">
-        <a class="nav_link" href="/cart?cid={{user.cart}}">Cart</a>
+        <a class="nav_link" href="/mockingproducts">Extras</a>
+      </li>
+      <li class="nav__item">
+        <a class="nav_link" href="/cart?cid={{user.cartId}}">Cart</a>
       </li>
       <li class="nav__item">
         <a class="nav_link" href="/api/session/logout">Logout</a>
@@ -26,11 +29,12 @@
       class="user-image"
     />
     <div class="user-details">
-      <a href="/ticket">see ticket</a>
-      <h1>{{user.firstName}} {{user.lastName}}</h1>
+      <a href="api/ticket/{{user.ticketId}}">see ticket</a>
       <p>Email: {{user.email}}</p>
+      <h1>{{#if user.lastName}}{{user.firstName}}
+          {{user.lastName}}{{else}}{{user.firstName}}{{/if}}</h1>
       <div class="additional-info">
-        <h2>Age: {{user.age}}</h2>
+        <h2>{{#if user.age}}Age: {{user.age}}{{/if}}</h2>
         <h2>Role: {{user.role}}</h2>
       </div>
     </div>

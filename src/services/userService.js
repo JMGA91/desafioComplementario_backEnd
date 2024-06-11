@@ -1,4 +1,4 @@
-import userDao from "../dao/userDao.js";
+import UserRepository from "../repository/userRepository.js";
 import { isValidPassword } from "../utils/functionUtil.js";
 import jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";
@@ -6,9 +6,13 @@ dotenv.config();
 
 const secretKey = process.env.SECRET_KEY;
 
-class UserService {
+export default class UserService {
+  constructor() {
+    this.userRepository = new UserRepository();
+  }
+
   async getUsers() {
-    return await userDao.getUsers();
+    return await this.userRepository.getUsers();
   }
 
   async registerUser(user) {
@@ -16,19 +20,19 @@ class UserService {
       user.email == "admin@flameshop.com" &&
       isValidPassword(user, "admin12345")
     ) {
-      const result = await userDao.createUser(user);
-      result.role = "Admin";
+      const result = await this.userRepository.createUser(user);
+      result.role = "admin";
       await result.save();
       return result;
     }
-    return await userDao.createUser(user);
+    return await this.userRepository.createUser(user);
   }
 
   async loginUser(email, password) {
     if (!email || !password) {
       throw new Error("Invalid credentials!");
     }
-    const user = await userDao.findUserByEmail(email);
+    const user = await this.userRepository.findUserByEmail(email);
     if (!user) throw new Error("Invalid user!");
 
     if (isValidPassword(user, password)) {
@@ -40,13 +44,14 @@ class UserService {
   }
 
   async updateUser(userId, cartId) {
-    return await userDao.updateUser(userId, cartId);
+    return await this.userRepository.updateUser(userId, cartId);
   }
 
   async findUserEmail(email) {
-    return await userDao.findUserByEmail(email);
+    return await this.userRepository.findUserByEmail(email);
+  }
+
+  async findUserById(userId) {
+    return await this.userRepository.findUserById(userId);
   }
 }
-
-const userService = new UserService();
-export default userService;

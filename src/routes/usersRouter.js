@@ -2,6 +2,7 @@ import { Router } from "express";
 import userController from "../controllers/userController.js";
 import cartController from "../repository/cartRepository.js";
 import { generateToken, authToken } from "../utils/utils.js";
+import passport from "passport";
 
 const router = Router();
 
@@ -56,11 +57,21 @@ router.get("/logout", (req, res) => {
   });
 });
 
-router.get("/current", authToken, (req, res) => {
-  res.send({
-    status: "success",
-    user: req.user,
-  });
-});
+const filterUserData = (user) => {
+  const { _id, password, role, __v, ...filteredUser } = user;
+  return filteredUser;
+};
+
+router.get(
+  "/current",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const filteredUser = filterUserData(req.user.user);
+    res.send({
+      status: "success",
+      user: filteredUser,
+    });
+  }
+);
 
 export default router;

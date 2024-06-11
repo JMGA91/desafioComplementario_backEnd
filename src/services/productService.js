@@ -1,27 +1,38 @@
-import productDao from "../dao/productDao.js";
+import ProductRepository from "../repository/productRepository.js";
 
-class ProductService {
+export default class ProductService {
+  constructor() {
+    this.productRepository = new ProductRepository();
+  }
+
   async getAllProducts(limit, page, query, sort) {
-    const options = { page: page ?? 1, limit: limit ?? 100, sort, lean: true };
-    return await productDao.getAllProducts(query ?? {}, options);
+    const options = {};
+    if (limit) options.limit = limit;
+    if (page) options.page = page;
+    if (sort) options.sort = sort;
+    options.lean = true;
+
+    return await this.productRepository.getAllProducts(
+      limit,
+      page,
+      query,
+      sort
+    );
   }
 
   async getProductById(pid) {
-    return await productDao.getProductById(pid);
+    return await this.productRepository.getProductByID(pid);
   }
 
   async createProduct(product) {
-    return await productDao.createProduct(product);
+    return await this.productRepository.createProduct(product);
   }
 
   async updateProduct(pid, productUpdate) {
-    return await productDao.updateProduct(pid, productUpdate);
+    return await this.productRepository.updateProduct(pid, productUpdate);
   }
 
   async deleteProduct(pid) {
-    return await productDao.deleteProduct(pid);
+    return await this.productRepository.deleteProduct(pid);
   }
 }
-
-const productService = new ProductService();
-export default productService;

@@ -1,10 +1,12 @@
 import productController from "./controllers/productController.js";
 import userManagerDB from "./controllers/userController.js";
 import cartController from "./repository/cartRepository.js";
+import MessageController from "./controllers/messageController.js";
 
 const UserManager = new userManagerDB();
 const ProductService = new productController();
 const CartManager = new cartController();
+const MessageManager = new MessageController();
 
 export default (io) => {
   io.on("connection", (socket) => {
@@ -30,10 +32,9 @@ export default (io) => {
 
     socket.on("message", async (data) => {
       console.log(`Message received from ${socket.id}: ${data.message}`);
-      // Handle message logic here
       try {
-        await messagemanagerdb.insertMessage(data.user, data.message);
-        io.emit("messagesLogs", await messagemanagerdb.getAllMessages());
+        await MessageManager.insertMessage(data.user, data.message);
+        io.emit("messagesLogs", await MessageManager.getAllMessages());
       } catch (error) {
         console.error("Error handling message:", error.message);
       }
@@ -41,7 +42,7 @@ export default (io) => {
 
     socket.on("userConnect", async (data) => {
       try {
-        socket.emit("messagesLogs", await messagemanagerdb.getAllMessages());
+        socket.emit("messagesLogs", await MessageManager.getAllMessages());
         socket.broadcast.emit("newUser", data);
       } catch (error) {
         console.error("Error handling user connection:", error.message);
@@ -82,10 +83,8 @@ export default (io) => {
           productId,
           quantity
         );
-        // Emit event to update client-side cart
         io.emit("cartUpdated", cart);
       } catch (error) {
-        // Handle errors
         console.error(error.message);
         socket.emit("cartError", error.message);
       }
