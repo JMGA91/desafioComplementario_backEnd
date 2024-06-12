@@ -1,11 +1,15 @@
-import ticketDTO from "../dao/DTOs/ticketDto.js";
-import ticketService from "../services/ticketService.js";
+import TicketDTO from "../dao/DTOs/ticketDto.js";
+import TicketDao from "../dao/ticketDao.js";
 import { userModel } from "../models/userModel.js";
 
-class TicketRepository {
-  async getAllTickets(limit, page, query, sort) {
+export default class TicketRepository {
+  constructor() {
+    this.ticketDao = new TicketDao();
+  }
+
+  async getAllTickets() {
     try {
-      return await ticketService.getAllTickets(limit, page, query, sort);
+      return await this.ticketDao.getAll();
     } catch (error) {
       console.error(error.message);
       throw new Error("Error fetching tickets from repository");
@@ -14,7 +18,7 @@ class TicketRepository {
 
   async getTicketById(tid) {
     try {
-      const result = await ticketService.getTicketById(tid);
+      const result = await this.ticketDao.getById(tid);
       if (!result) throw new Error(`Ticket with ID ${tid} does not exist!`);
       return result;
     } catch (error) {
@@ -27,20 +31,20 @@ class TicketRepository {
     try {
       const { purchaseDateTime, amount, purchaser } = ticketData;
 
-      // Validate purchaser
+      // Find the user by email
       const user = await userModel.findOne({ email: purchaser });
       if (!user) {
         throw new Error("Purchaser not found");
       }
 
       const code = await this.generateTicketCode();
-      const newTicketDTO = new ticketDTO({
+      const newTicketDTO = new TicketDTO({
         code,
         purchaseDateTime,
         amount,
         purchaser: user._id,
       });
-      return await ticketService.createTicket(newTicketDTO);
+      return await this.ticketDao.create(newTicketDTO);
     } catch (error) {
       console.error(error.message);
       throw new Error("Error creating ticket in repository");
@@ -49,13 +53,10 @@ class TicketRepository {
 
   async generateTicketCode() {
     try {
-      const randomCode = Math.floor(Math.random() * 1000) + 1;
-      return randomCode;
+      return await this.ticketDao.generateCode();
     } catch (error) {
       console.error(error.message);
       throw new Error("Error generating random code");
     }
   }
 }
-
-export default new TicketRepository();

@@ -1,10 +1,14 @@
-import userService from "../services/userService.js";
+import UserService from "../services/userService.js";
 import UserDTO from "../dao/DTOs/userDto.js";
 
 export default class UserController {
+  constructor() {
+    this.userService = new UserService();
+  }
+
   async getUsers() {
     try {
-      return await userService.getUsers();
+      return await this.userService.getUsers();
     } catch (error) {
       console.error(error);
     }
@@ -13,7 +17,7 @@ export default class UserController {
   async registerUser(user) {
     const newUser = new UserDTO(user);
     try {
-      return await userService.registerUser(newUser);
+      return await this.userService.registerUser(newUser);
     } catch (error) {
       console.error(error);
     }
@@ -21,7 +25,7 @@ export default class UserController {
 
   async loginUser(email, password) {
     try {
-      return await userService.loginUser(email, password);
+      return await this.userService.loginUser(email, password);
     } catch (error) {
       throw new Error("Login Error!");
     }
@@ -29,7 +33,7 @@ export default class UserController {
 
   async updateUser(userId, cartId) {
     try {
-      return await userService.updateUser(userId, cartId);
+      return await this.userService.updateUser(userId, cartId);
     } catch (error) {
       console.error(error);
     }
@@ -37,7 +41,15 @@ export default class UserController {
 
   async findUserEmail(email) {
     try {
-      return await userService.findUserEmail(email);
+      return await this.userService.findUserEmail(email);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async findUserById(userId) {
+    try {
+      return await this.userService.findUserById(userId);
     } catch (error) {
       console.error(error);
     }

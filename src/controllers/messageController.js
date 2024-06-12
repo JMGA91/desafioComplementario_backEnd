@@ -1,9 +1,13 @@
-import messageRepository from "../repository/messageRepository.js";
+import MessageService from "../services/messageService.js";
 
 class MessageController {
+  constructor() {
+    this.messageService = new MessageService();
+  }
+
   async getAllMessages() {
     try {
-      return await messageRepository.getAllMessages();
+      return await this.messageService.getAllMessages();
     } catch (error) {
       console.error(error.message);
       throw new Error("Error fetching messages");
@@ -12,7 +16,7 @@ class MessageController {
 
   async insertMessage(user, message) {
     try {
-      return await messageRepository.insertMessage(user, message);
+      return await this.messageService.insertMessage(user, message);
     } catch (error) {
       console.error(error.message);
       throw new Error("Error creating new message");
@@ -20,5 +24,4 @@ class MessageController {
   }
 }
 
-const messageController = new MessageController();
-export default messageController;
+export default MessageController;

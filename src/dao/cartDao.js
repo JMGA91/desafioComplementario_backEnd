@@ -1,19 +1,19 @@
 import Cart from "../models/cartModel.js";
 
-class CartDao {
-  async getAllCarts() {
+export default class CartDao {
+  async getAll() {
     return await Cart.find();
   }
 
-  async createCart() {
+  async create() {
     return await Cart.create({ products: [] });
   }
 
-  async getCartById(cid) {
+  async getById(cid) {
     return await Cart.findById(cid).populate("products.product").lean();
   }
 
-  async addProductToCart(cartid, productId, quantity) {
+  async addCart(cartid, productId, quantity) {
     const cart = await Cart.findOne({ _id: cartid });
     if (!cart) throw new Error(`Cart with ID ${cartid} not found`);
 
@@ -30,28 +30,39 @@ class CartDao {
     return cart;
   }
 
-  async updateProductQuantity(cartId, productId, quantity) {
+  async updateQuantity(cartId, productId, quantity) {
     return await Cart.updateOne(
       { _id: cartId, "products.product": productId },
       { $set: { "products.$.quantity": quantity } }
     );
   }
 
-  async deleteCart(id) {
+  async delete(id) {
     return await Cart.deleteOne({ _id: id });
   }
 
-  async deleteAllProductsFromCart(cartId) {
+  async deleteProducts(cartId) {
     return await Cart.findByIdAndUpdate(cartId, { products: [] });
   }
 
-  async deleteProductFromCart(cartId, productId) {
+  async deleteProduct(cartId, productId) {
     return await Cart.findOneAndUpdate(
       { _id: cartId },
       { $pull: { products: { product: productId } } }
     );
   }
-}
 
-const cartDao = new CartDao();
-export default cartDao;
+  async getStockFromProducts(cid) {
+    const cart = await Cart.findById(cid).populate("products.product");
+    if (!cart) throw new Error(`Cart with ID ${cid} not found`);
+
+    const stockDetails = cart.products.map((product) => {
+      return {
+        product: product.product._id,
+        stock: product.product.stock,
+      };
+    });
+
+    return stockDetails;
+  }
+}

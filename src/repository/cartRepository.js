@@ -1,10 +1,14 @@
-import cartService from "../services/cartService.js";
+import CartDao from "../dao/cartDao.js";
 import cartDTO from "../dao/DTOs/cartDto.js";
 
-class cartRepository {
+export default class cartRepository {
+  constructor() {
+    this.cartDao = new CartDao();
+  }
+
   async getAllCarts() {
     try {
-      return await cartService.getAllCarts();
+      return await this.cartDao.getAll();
     } catch (error) {
       console.error(error.message);
       throw new Error("Error fetching carts");
@@ -14,7 +18,7 @@ class cartRepository {
   async createCart() {
     try {
       const newCartDTO = new cartDTO({ products: [] });
-      const newCart = await cartService.createCart(newCartDTO);
+      const newCart = await this.cartDao.create(newCartDTO);
       return newCart;
     } catch (error) {
       console.error(error.message);
@@ -24,7 +28,7 @@ class cartRepository {
 
   async getProductsFromCartByID(cid) {
     try {
-      const products = await this.dao.getProductsFromCart(cid);
+      const products = await this.cartDao.getById(cid);
       return new cartDTO(products);
     } catch (error) {
       throw new Error(`Products not found in ${cid}`);
@@ -33,7 +37,7 @@ class cartRepository {
 
   async addProductToCart(cartid, productId, quantity = 1) {
     try {
-      const cart = await cartService.addProductToCart({ _id: cartid });
+      const cart = await this.cartDao.addCart(cartid);
       if (!cart) throw new Error(`Cart with ID ${cartid} not found`);
 
       console.log("Cart retrieved:", cart); // Logging the cart
@@ -60,9 +64,9 @@ class cartRepository {
 
   async updateProductQuantity(cartId, productId, quantity) {
     try {
-      return await cartService.updateOne(
-        { _id: cartId, "products.product": productId },
-        { $set: { "products.$.quantity": quantity } }
+      return await this.cartDao.updateQuantity(
+        { cartId, productId },
+        { quantity }
       );
     } catch (error) {
       console.error(error.message);
@@ -72,7 +76,7 @@ class cartRepository {
 
   async deleteCart(id) {
     try {
-      return await cartModel.deleteOne({ _id: id });
+      return await this.cartDao.delete(id);
     } catch (error) {
       console.error(error.message);
       throw new Error("Error deleting cart");
@@ -81,7 +85,7 @@ class cartRepository {
 
   async deleteAllProductsFromCart(cartId) {
     try {
-      return await cartService.findByIdAndUpdate(cartId, { products: [] });
+      return await this.cartDao.deleteProducts(cartId);
     } catch (error) {
       console.error(error.message);
       throw new Error("Error deleting all products from cart");
@@ -90,10 +94,7 @@ class cartRepository {
 
   async deleteProductFromCart(cartId, productId) {
     try {
-      return await cartService.findOneAndUpdate(
-        { _id: cartId },
-        { $pull: { products: { product: productId } } }
-      );
+      return await this.cartDao.deleteProduct(cartId, productId);
     } catch (error) {
       console.error(error.message);
       throw new Error("Error deleting product from cart");
@@ -110,5 +111,3 @@ class cartRepository {
     }
   }
 }
-
-export default cartRepository;

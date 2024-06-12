@@ -1,15 +1,25 @@
 import { Router } from "express";
+import CustomError from "../services/errors/CustomError.js";
+import { generateProductsErrorInfo } from "../services/errors/info.js";
+import { ErrorCodes } from "../services/errors/enums.js";
 import ProductController from "../controllers/productController.js";
 import { uploader } from "../utils/multerUtil.js";
+import passport from "passport";
+import { auth } from "../middlewares/auth.js";
 import productModel from "../models/productModel.js";
 
 const router = Router();
-const productControllerDB = new ProductController();
+const productController = new ProductController();
 
 router.get("/", async (req, res) => {
   try {
-    let { limit = 10, page = 1, query = {}, sort = null } = req.query;
-    const result = await productControllerDB.getAllProducts(
+    let { limit, page, query, sort } = req.query;
+    query = query ? JSON.parse(query) : {};
+    limit = limit ? parseInt(limit) : undefined;
+    page = page ? parseInt(page) : undefined;
+    sort = sort ? JSON.parse(sort) : undefined;
+
+    const result = await productController.getAllProducts(
       limit,
       page,
       query,
@@ -28,38 +38,68 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", uploader.array("thumbnails", 3), async (req, res) => {
-  if (req.files) {
-    req.body.thumbnails = [];
-    req.files.forEach((file) => {
-      req.body.thumbnails.push(file.filename);
-    });
-  }
+router.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  auth("admin"),
+  uploader.array("thumbnails", 3),
+  async (req, res) => {
+    if (req.files) {
+      req.body.thumbnails = req.files.map((file) => file.filename);
+    }
 
-  try {
-    const result = await productControllerDB.createProduct(req.body);
-    res.send({
-      status: "success",
-      payload: result,
-    });
-  } catch (error) {
-    res.status(400).send({
-      status: "error",
-      message: error.message,
-    });
+    const { title, description, code, price, status, stock, category } =
+      req.body;
+
+    if (
+      !title ||
+      !description ||
+      !code ||
+      !price ||
+      typeof status === "undefined" ||
+      !stock ||
+      !category
+    ) {
+      const product = {
+        title,
+        description,
+        code,
+        price,
+        status,
+        stock,
+        category,
+      };
+      const errorInfo = generateProductsErrorInfo(product);
+      return CustomError.createError({
+        name: "Product creation error",
+        cause: errorInfo,
+        message: "Error trying to create Product",
+        code: ErrorCodes.INVALID_TYPES_ERROR,
+      });
+    }
+
+    try {
+      const result = await productController.createProduct(req.body);
+      res.send({
+        status: "success",
+        payload: result,
+      });
+    } catch (error) {
+      res.status(400).send({
+        status: "error",
+        message: error.message,
+      });
+    }
   }
-});
+);
 
 router.put("/:pid", uploader.array("thumbnails", 3), async (req, res) => {
   if (req.files) {
-    req.body.thumbnails = [];
-    req.files.forEach((file) => {
-      req.body.thumbnails.push(file.filename);
-    });
+    req.body.thumbnails = req.files.map((file) => file.filename);
   }
 
   try {
-    const result = await productControllerDB.updateProduct(
+    const result = await productController.updateProduct(
       req.params.pid,
       req.body
     );
@@ -77,7 +117,7 @@ router.put("/:pid", uploader.array("thumbnails", 3), async (req, res) => {
 
 router.delete("/:pid", async (req, res) => {
   try {
-    const result = await productControllerDB.deleteProduct(req.params.pid);
+    const result = await productController.deleteProduct(req.params.pid);
     res.send({
       status: "success",
       payload: result,
@@ -93,7 +133,6 @@ router.delete("/:pid", async (req, res) => {
 router.get("/search", async (req, res) => {
   try {
     const { title } = req.query;
-    console.log(req.query);
     let query = {};
     if (title) query = { title };
 
@@ -115,7 +154,7 @@ router.get("/search", async (req, res) => {
 
 router.get("/:pid", async (req, res) => {
   try {
-    const result = await productControllerDB.getProductByID(req.params.pid);
+    const result = await productController.getProductByID(req.params.pid);
     res.send({
       status: "success",
       payload: result,

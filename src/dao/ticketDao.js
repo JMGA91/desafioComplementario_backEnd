@@ -1,7 +1,7 @@
 import ticketModel from "../models/ticketModel.js";
 
-class TicketDao {
-  async getAllTickets() {
+export default class TicketDao {
+  async getAll() {
     try {
       const tickets = await ticketModel
         .find()
@@ -14,11 +14,11 @@ class TicketDao {
     }
   }
 
-  async getTicketById(ticketId) {
+  async getById(ticketId) {
     return await ticketModel.findOne({ _id: ticketId });
   }
 
-  async getTicketsByUserId(userId) {
+  async geUserById(userId) {
     try {
       const tickets = await ticketModel.find({ userId: userId });
       return tickets;
@@ -27,7 +27,7 @@ class TicketDao {
     }
   }
 
-  async createTicket(ticket) {
+  async create(ticket) {
     try {
       const newTicket = await ticketModel.create(ticket);
       return newTicket;
@@ -35,7 +35,14 @@ class TicketDao {
       throw error;
     }
   }
-}
 
-const ticketDao = new TicketDao();
-export default ticketDao;
+  async generateCode() {
+    try {
+      const randomCode = Math.floor(Math.random() * 1000) + 1;
+      return randomCode;
+    } catch (error) {
+      console.error(error.message);
+      throw new Error("Error generating random code");
+    }
+  }
+}

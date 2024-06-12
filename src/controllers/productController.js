@@ -1,9 +1,13 @@
-import productRepository from "../repository/productRepository.js";
+import ProductService from "../services/productService.js";
 
 class ProductController {
+  constructor() {
+    this.productService = new ProductService();
+  }
+
   async getAllProducts(limit, page, query, sort) {
     try {
-      return await productRepository.getAllProducts(limit, page, query, sort);
+      return await this.productService.getAllProducts(limit, page, query, sort);
     } catch (error) {
       console.error(error.message);
       throw new Error("Error fetching products");
@@ -12,7 +16,7 @@ class ProductController {
 
   async getProductByID(pid) {
     try {
-      return await productRepository.getProductByID(pid);
+      return await this.productService.getProductById(pid);
     } catch (error) {
       console.error(error.message);
       throw new Error("Error fetching product");
@@ -21,7 +25,7 @@ class ProductController {
 
   async createProduct(product) {
     try {
-      return await productRepository.createProduct(product);
+      return await this.productService.createProduct(product);
     } catch (error) {
       console.error(error.message);
       throw new Error("Error creating product");
@@ -30,7 +34,7 @@ class ProductController {
 
   async updateProduct(pid, productUpdate) {
     try {
-      return await productRepository.updateProduct(pid, productUpdate);
+      return await this.productService.updateProduct(pid, productUpdate);
     } catch (error) {
       console.error(error.message);
       throw new Error("Error updating product");
@@ -39,7 +43,7 @@ class ProductController {
 
   async deleteProduct(pid) {
     try {
-      return await productRepository.deleteProduct(pid);
+      return await this.productService.deleteProduct(pid);
     } catch (error) {
       console.error(error.message);
       throw new Error(`Error deleting product ${pid}`);

@@ -3,6 +3,8 @@ import ticketRepository from "../repository/ticketRepository.js";
 
 const router = Router();
 
+const ticketRepository = new TicketRepository();
+
 router.get("/", async (req, res) => {
   try {
     const tickets = await ticketRepository.getAllTickets();

@@ -1,9 +1,13 @@
-import cartRepository from "../repository/cartRepository.js";
+import CartService from "../services/cartService.js";
 
 class CartController {
+  constructor() {
+    this.cartService = new CartService();
+  }
+
   async getAllCarts() {
     try {
-      return await cartRepository.getAllCarts();
+      return await this.cartService.getAllCarts();
     } catch (error) {
       console.error(error.message);
       throw new Error("Error fetching carts");
@@ -12,7 +16,8 @@ class CartController {
 
   async createCart() {
     try {
-      return await cartRepository.createCart({ products: [] });
+      const newCart = await this.cartService.createCart();
+      return newCart;
     } catch (error) {
       console.error(error.message);
       throw new Error("Error creating cart");
@@ -21,7 +26,7 @@ class CartController {
 
   async getProductsFromCartByID(cartId) {
     try {
-      return await cartRepository.getProductsFromCart(cartId);
+      return await this.cartService.getProductsFromCartByID(cartId);
     } catch (error) {
       console.error(error.message);
       throw new Error(`Products not found in cart ${cartId}`);
@@ -30,7 +35,11 @@ class CartController {
 
   async addProductToCart(cartId, productId, quantity = 1) {
     try {
-      return await cartRepository.addProductToCart(cartId, productId, quantity);
+      return await this.cartService.addProductToCart(
+        cartId,
+        productId,
+        quantity
+      );
     } catch (error) {
       console.error(error.message);
       throw new Error("Error adding product to cart");
@@ -39,7 +48,7 @@ class CartController {
 
   async updateProductQuantity(cartId, productId, quantity) {
     try {
-      return await cartRepository.updateProductQuantity(
+      return await this.cartService.updateProductQuantity(
         cartId,
         productId,
         quantity
@@ -52,7 +61,7 @@ class CartController {
 
   async deleteCart(id) {
     try {
-      return await cartRepository.deleteCart(id);
+      return await this.cartService.deleteCart(id);
     } catch (error) {
       console.error(error.message);
       throw new Error("Error deleting cart");
@@ -61,7 +70,7 @@ class CartController {
 
   async deleteAllProductsFromCart(cartId) {
     try {
-      return await cartRepository.deleteAllProductsFromCart(cartId);
+      return await this.cartService.deleteAllProductsFromCart(cartId);
     } catch (error) {
       console.error(error.message);
       throw new Error("Error deleting all products from cart");
@@ -70,18 +79,21 @@ class CartController {
 
   async deleteProductFromCart(cartId, productId) {
     try {
-      return await cartRepository.deleteProductFromCart(cartId, productId);
+      return await this.cartService.deleteProductFromCart(cartId, productId);
     } catch (error) {
       console.error(error.message);
       throw new Error("Error deleting product from cart");
     }
   }
 
-  async getStockfromProducts(cart) {
-    return await cartRepository.getStockfromProducts(cart);
+  async getStockFromProducts(cartId) {
+    try {
+      return await this.cartService.getStockFromProducts(cartId);
+    } catch (error) {
+      console.error(error.message);
+      throw new Error(`Could not get stock from products in cart ${cartId}`);
+    }
   }
 }
 
-const cartController = new CartController();
-
-export default cartController;
+export default CartController;

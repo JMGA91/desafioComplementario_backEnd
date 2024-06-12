@@ -98,7 +98,7 @@ sessionRouter.get(
 sessionRouter.get(
   "/:uid",
   passport.authenticate("jwt", { session: false }),
-  auth("teacher"),
+  auth("admin"),
   async (req, res) => {
     try {
       const result = await userControllerDB.getUsers(req.params.uid);

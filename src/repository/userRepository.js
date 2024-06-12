@@ -1,9 +1,13 @@
-import userDao from "../dao/userDao.js";
+import UserDao from "../dao/userDao.js";
 
-class UserRepository {
+export default class UserRepository {
+  constructor() {
+    this.userDao = new UserDao();
+  }
+
   async getUsers() {
     try {
-      return await userDao.getUsers();
+      return await this.userDao.getAll();
     } catch (error) {
       throw new Error("Error fetching users: " + error.message);
     }
@@ -11,7 +15,7 @@ class UserRepository {
 
   async createUser(user) {
     try {
-      return await userDao.createUser(user);
+      return await this.userDao.create(user);
     } catch (error) {
       throw new Error("Error creating user: " + error.message);
     }
@@ -19,7 +23,7 @@ class UserRepository {
 
   async findUserByEmail(email) {
     try {
-      return await userDao.findUserByEmail(email);
+      return await this.userDao.findByEmail(email);
     } catch (error) {
       throw new Error("Error finding user by email: " + error.message);
     }
@@ -27,7 +31,7 @@ class UserRepository {
 
   async updateUser(userId, cartId) {
     try {
-      return await userDao.updateUser(userId, cartId);
+      return await this.userDao.update(userId, cartId);
     } catch (error) {
       throw new Error("Error updating user: " + error.message);
     }
@@ -35,12 +39,9 @@ class UserRepository {
 
   async findUserById(userId) {
     try {
-      return await userDao.findUserById(userId);
+      return await this.userDao.findById(userId);
     } catch (error) {
       throw new Error("Error finding user by ID: " + error.message);
     }
   }
 }
-
-const userRepository = new UserRepository();
-export default userRepository;

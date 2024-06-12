@@ -1,26 +1,23 @@
 import productModel from "../models/productModel.js";
 
-class ProductDao {
-  async getAllProducts(query, options) {
+export default class ProductDao {
+  async getAll(query, options) {
     return await productModel.paginate(query, options);
   }
 
-  async getProductById(pid) {
+  async getById(pid) {
     return await productModel.findOne({ _id: pid });
   }
 
-  async createProduct(product) {
+  async create(product) {
     return await productModel.create(product);
   }
 
-  async updateProduct(pid, productUpdate) {
+  async update(pid, productUpdate) {
     return await productModel.updateOne({ _id: pid }, productUpdate);
   }
 
-  async deleteProduct(pid) {
+  async delete(pid) {
     return await productModel.deleteOne({ _id: pid });
   }
 }
-
-const productDao = new ProductDao();
-export default productDao;
