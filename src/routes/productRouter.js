@@ -88,6 +88,7 @@ router.post(
       res.status(400).send({
         status: "error",
         message: error.message,
+        cause: error,
       });
     }
   }

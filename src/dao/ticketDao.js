@@ -15,7 +15,7 @@ export default class TicketDao {
   }
 
   async getById(ticketId) {
-    return await ticketModel.findOne({ _id: ticketId });
+    return await ticketModel.findOne({ _id: ticketId }).lean();
   }
 
   async geUserById(userId) {

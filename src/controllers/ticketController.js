@@ -18,7 +18,7 @@ class TicketController {
     try {
       const result = await this.ticketService.getTicketById(tid);
       if (!result) throw new Error(`Ticket with ID ${tid} does not exist!`);
-      res.send({ status: "success", payload: result });
+      return result;
     } catch (error) {
       console.error(error.message);
       res.status(400).send({ status: "error", message: error.message });

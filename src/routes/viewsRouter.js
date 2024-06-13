@@ -168,7 +168,7 @@ router.get(
       res.render("ticket", {
         title: "Ticket",
         style: "index.css",
-        ticket: ticket.payload,
+        ticket: ticket,
       });
     } catch (error) {
       console.error(error);
