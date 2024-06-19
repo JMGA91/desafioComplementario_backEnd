@@ -85,6 +85,7 @@ router.post(
         payload: result,
       });
     } catch (error) {
+      req.logger.warning("Cannot add product");
       res.status(400).send({
         status: "error",
         message: error.message,
@@ -109,6 +110,7 @@ router.put("/:pid", uploader.array("thumbnails", 3), async (req, res) => {
       payload: result,
     });
   } catch (error) {
+    req.logger.warning("Cannot update product");
     res.status(400).send({
       status: "error",
       message: error.message,
@@ -124,6 +126,7 @@ router.delete("/:pid", async (req, res) => {
       payload: result,
     });
   } catch (error) {
+    req.logger.warning("Cannot delete product");
     res.status(400).send({
       status: "error",
       message: error.message,
@@ -161,6 +164,7 @@ router.get("/:pid", async (req, res) => {
       payload: result,
     });
   } catch (error) {
+    req.logger.warning("Cannot get product");
     res.status(400).send({
       status: "error",
       message: error.message,

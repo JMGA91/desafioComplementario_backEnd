@@ -10,12 +10,13 @@ import mongoose from "mongoose";
 import mongoStore from "connect-mongo";
 import session from "express-session";
 import usersRouter from "./routes/usersRouter.js";
+import ticketRouter from "./routes/ticketRouter.js";
 import passport from "passport";
 import initializatePassport from "./config/passportConfig.js";
 import sessionRouter from "./routes/sessionRouter.js";
-import * as dotenv from "dotenv"; 
+import * as dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import ticketRouter from "./routes/ticketRouter.js";
+import { addLogger, startLogger } from "./utils/loggerUtil.js";
 
 dotenv.config({ path: "./src/mongo.env" });
 
@@ -49,31 +50,35 @@ app.use(cookieParser());
 app.use(
   session({
     store: mongoStore.create({
-      mongoUrl: uri, // uri es la variable que contiene la URL de conexión a MongoDB
+      mongoUrl: uri,
       ttl: 20,
     }),
-    secret:"secretPhrase",
+    secret: "secretPhrase",
     resave: true,
     saveUninitialized: true,
   })
 );
+
 //Passport
 initializatePassport();
 app.use(passport.initialize());
 app.use(passport.session());
+
+//Logger
+app.use(addLogger);
 
 // Routers
 app.use("/api/ticket", ticketRouter);
 app.use("/api/session", sessionRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/products", productRouter);
-app.use("/api/carts", cartRouter);
+app.use("/api/cart", cartRouter);
 app.use("/", viewsRouter);
 
 // Start server
 const PORT = 8080;
 const httpServer = app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  startLogger(`Server is running on port ${PORT}`);
 });
 
 // Socket.io integration

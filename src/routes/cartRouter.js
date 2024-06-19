@@ -16,6 +16,7 @@ router.get("/:cid", async (req, res) => {
       payload: result,
     });
   } catch (error) {
+    req.logger.warning("Cannot get Products from cart");
     res.status(400).send({
       status: "error",
       message: error.message,
@@ -28,10 +29,11 @@ router.post("/", async (req, res) => {
     const result = await cartController.createCart();
     res.send({
       status: "success",
-      message: "Cart successfully created!",
+      message: "Your cart has been successfully created",
       payload: result,
     });
   } catch (error) {
+    req.logger.warning("Cannot add Cart");
     res.status(400).send({
       status: "error",
       message: error.message,
@@ -48,6 +50,7 @@ router.post("/register", async (req, res) => {
     res.redirect("/user");
   } catch (error) {
     res.redirect("/register");
+    req.logger.warning("Cannot register User with CartId");
   }
 });
 
@@ -56,6 +59,7 @@ router.get("/", async (req, res) => {
     const carts = await cartController.getAllCarts();
     res.send({ carts });
   } catch (error) {
+    req.logger.warning("Cannot see all Carts made");
     res.status(400).send({
       status: "error",
       message: error.message,
@@ -90,6 +94,7 @@ router.put("/:cid", async (req, res) => {
     const cart = await cartController.updateCart(cartId, products);
     res.send({ status: "success", message: "Your cart has been edited", cart });
   } catch (error) {
+    req.logger.warning("Cannot update Cart");
     console.error(error);
   }
 });
@@ -102,6 +107,7 @@ router.put("/:cid/products/:pid", async (req, res) => {
     await cartController.updateProductQuantity(cartId, productId, quantity);
     res.send({ status: "success", message: "Quantity changed" });
   } catch (error) {
+    req.logger.warning("Cannot update Quantity");
     console.error(error);
     res.status(400).send({
       status: "error",
@@ -116,6 +122,7 @@ router.delete("/:cid", async (req, res) => {
     await cartController.deleteAllProductsFromCart(cartId);
     res.send("Cart has been deleted");
   } catch (error) {
+    req.logger.warning("Cannot delete cart");
     console.error(error);
     res
       .status(400)
@@ -130,24 +137,25 @@ router.delete("/:cid/products/:pid", async (req, res) => {
     await cartController.deleteProductFromCart(cartId, productId);
     res.send(`Product ${productId} has been deleted from the cart`);
   } catch (error) {
+    req.logger.warning("Cannot delete Product from cart");
     console.error(error);
     res.status(400).send({
       status: "error",
-      error: "There was an error deleting this product from the cart",
+      error: "There was an error deleting the product from the cart",
     });
   }
 });
 
-router.post("/:cid/purchase", async (req, res) => {
+//Fetch details of a specific cart by ID
+router.get("/:cid", async (req, res) => {
   try {
-    const results = await cartController.getStockFromProducts(req.params.cid);
-
+    const result = await cartController.getProductsFromCartByID(req.params.cid);
     res.send({
       status: "success",
-      payload: results,
+      payload: result,
     });
   } catch (error) {
-    console.log(error);
+    req.logger.warning("Cannot fetch the details");
     res.status(400).send({
       status: "error",
       message: error.message,
@@ -155,11 +163,18 @@ router.post("/:cid/purchase", async (req, res) => {
   }
 });
 
-router.get("/:cid/purchase", async (req, res) => {
+//Finalize the purchase process for a cart
+router.post("/:cid/purchase", async (req, res) => {
   try {
+    //Get purchaser's email (assuming it's stored in req.user.email)
     const purchaser = req.user.email;
-    const cart = await cartController.getProductsFromCartByID(req.params.cid);
+    const cartId = req.params.cid;
 
+    //Purchase cart and get products that couldn't be processed
+    const notProcessed = await cartController.purchaseCart(cartId);
+
+    //Calculate total amount from the processed items in cart
+    const cart = await cartController.getProductsFromCartByID(cartId);
     let amount = 0;
     for (const cartProduct of cart.products) {
       amount += cartProduct.product.price * cartProduct.quantity;
@@ -168,13 +183,19 @@ router.get("/:cid/purchase", async (req, res) => {
     const ticket = await ticketController.createTicket(
       purchaser,
       amount,
-      cart.id
-    );
-    const notProcessed = await cartController.getStockFromProducts(
-      req.params.cid
+      cartId
     );
 
-    req.params.cid = ticket;
+    //Update cart with products that were not successfully processed
+    await cartController.updateCartWithNotProcessed(cartId, notProcessed);
+
+    res.send({
+      status: "success",
+      payload: {
+        ticket,
+        notProcessed,
+      },
+    });
 
     res.render("ticket", {
       title: "Ticket",
@@ -182,6 +203,8 @@ router.get("/:cid/purchase", async (req, res) => {
       notProcessed: notProcessed,
     });
   } catch (error) {
+    req.logger.warning("Cannot create ticket");
+    console.error(error);
     res.status(400).send({
       status: "error",
       message: error.message,

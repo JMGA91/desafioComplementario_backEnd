@@ -65,4 +65,22 @@ export default class CartDao {
 
     return stockDetails;
   }
+  async updateCartWithNotProcessed(cartId, notProcessed) {
+    try {
+      const cart = await CartModel.findById(cartId);
+
+      // Filter out processed products
+      cart.products = cart.products.filter((cartProduct) => {
+        return notProcessed.some(
+          (np) => np.product.toString() === cartProduct.product.toString()
+        );
+      });
+
+      await cart.save();
+      return cart;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Error updating cart with not processed products");
+    }
+  }
 }

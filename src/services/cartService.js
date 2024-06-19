@@ -1,8 +1,12 @@
-import cartRepository from "../repository/cartRepository.js";
+import CartRepository from "../repository/cartRepository.js";
+import TicketRepository from "../repository/ticketRepository.js";
+import ProductRepository from "../repository/productRepository.js";
 
 export default class CartService {
   constructor() {
-    this.cartRepository = new cartRepository();
+    this.cartRepository = new CartRepository();
+    this.ticketRepository = new TicketRepository();
+    this.productRepository = new ProductRepository();
   }
 
   async getAllCarts() {
@@ -47,5 +51,68 @@ export default class CartService {
 
   async getStockFromProducts(cid) {
     return await this.cartRepository.getStockFromProducts(cid);
+  }
+
+  async purchaseCart(cartId) {
+    try {
+      const cart = await this.cartRepository.getProductsFromCartByID(cartId);
+
+      // Check and update each product's stock
+      const notProcessed = [];
+      for (const cartProduct of cart.products) {
+        const productId = cartProduct.product._id;
+        const quantityToPurchase = cartProduct.quantity;
+
+        // Fetch the product
+        const product = await Product.findById(productId);
+
+        // Check if the product exists and has sufficient stock
+        if (!product) {
+          throw new Error(`Product with ID ${productId} not found`);
+        }
+
+        if (product.stock >= quantityToPurchase) {
+          // Deduct the purchased quantity from the product stock
+          product.stock -= quantityToPurchase;
+          await product.save();
+        } else {
+          // Add to notProcessed list if there's insufficient stock
+          notProcessed.push({
+            product: productId,
+            quantity: quantityToPurchase,
+          });
+        }
+      }
+
+      // Return products that couldn't be processed due to insufficient stock
+      return notProcessed;
+    } catch (error) {
+      console.error(error.message);
+      throw new Error("Error purchasing cart");
+    }
+  }
+
+  async updateCartWithNotProcessed(cartId, notProcessed) {
+    try {
+      // Update cart with products that were not successfully processed
+      return await this.cartRepository.updateCartWithNotProcessed(
+        cartId,
+        notProcessed
+      );
+    } catch (error) {
+      console.error(error.message);
+      throw new Error("Error updating cart with not processed products");
+    }
+  }
+
+  async updateCartWithTicket(cartId, ticketId) {
+    try {
+      const cart = await this.cartRepository.getProductsFromCartByID(cartId);
+      cart.ticket = ticketId;
+      await cart.save();
+    } catch (error) {
+      console.error(error.message);
+      throw new Error("Error updating cart with ticket");
+    }
   }
 }

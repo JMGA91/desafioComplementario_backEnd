@@ -199,4 +199,15 @@ router.get("/mockingproducts", (req, res) => {
   });
 });
 
+router.get("/loggertest", (req, res) => {
+  req.logger.fatal("Logger test fatal message");
+  req.logger.error("Logger test error message");
+  req.logger.warning("Logger test warning message");
+  req.logger.info("Logger test info message");
+  req.logger.http("Logger test http message");
+  req.logger.debug("Logger test debug message");
+
+  res.send("Logger test completed!");
+});
+
 export default router;

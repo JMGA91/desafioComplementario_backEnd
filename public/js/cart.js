@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Checkout
   const checkoutButton = document.querySelector(".checkout-btn");
   checkoutButton.addEventListener("click", () => {
-    alert("Checkout functionality not implemented yet.");
+    alert("Checkout functionality pending");
     
   });
 });

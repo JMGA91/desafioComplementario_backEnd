@@ -29,7 +29,7 @@ export default class TicketRepository {
 
   async createTicket(ticketData) {
     try {
-      const { purchaseDateTime, amount, purchaser } = ticketData;
+      const { purchaseDateTime, amount, products, purchaser } = ticketData;
 
       // Find the user by email
       const user = await userModel.findOne({ email: purchaser });
@@ -42,6 +42,7 @@ export default class TicketRepository {
         code,
         purchaseDateTime,
         amount,
+        products,
         purchaser: user._id,
       });
       return await this.ticketDao.create(newTicketDTO);
