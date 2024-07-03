@@ -2,11 +2,15 @@ import { Router } from "express";
 import CartController from "../controllers/cartController.js";
 import UserController from "../controllers/userController.js";
 import TicketController from "../controllers/ticketController.js";
+import ProductController from "../controllers/productController.js";
+import passport from "passport";
+import { checkOwnership } from "../utils/checkOwnershipUtil.js";
 
 const router = Router();
 const cartController = new CartController();
 const userController = new UserController();
 const ticketController = new TicketController();
+const productController = new ProductController();
 
 router.get("/:cid", async (req, res) => {
   try {
@@ -67,25 +71,68 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/:cid/products/:pid", async (req, res) => {
-  const cartId = req.params.cid;
-  const productId = req.params.pid;
-  const quantity = req.body.quantity || 1;
+router.post(
+  "/:cid/products/:pid",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const cartId = req.params.cid;
+    const productId = req.params.pid;
+    const quantity = req.body.quantity || 1;
+    const email = req.user.user.email;
+    let proceedWithCartUpdate = true;
 
-  try {
-    await cartController.addProductToCart(cartId, productId, quantity);
-    res.send({
-      status: "success",
-      message: "Product has been added successfully",
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(400).send({
-      status: "error",
-      error: "There was an error adding the product to the cart",
-    });
+    console.log(
+      "cartId:",
+      cartId,
+      "productId:",
+      productId,
+      "quantity:",
+      quantity,
+      "email:",
+      email
+    );
+
+    if (!productId || !quantity) {
+      console.error("Invalid productId or quantity");
+      return res.status(400).send({
+        status: "error",
+        error: "Invalid productId or quantity",
+      });
+    }
+
+    try {
+      // Info of the product
+      const product = await productController.getProductByID(productId);
+      // Info of the user authentication
+      const user = req.user;
+
+      // Check if the user is premium and if they are the creator of the product
+      if (user.role === "premium") {
+        proceedWithCartUpdate = !(await checkOwnership(productId, email));
+      }
+
+      if (proceedWithCartUpdate) {
+        // Add the product to the cart if the above conditions are not met
+        await cartController.addProductToCart(cartId, productId, quantity);
+        return res.send({
+          status: "success",
+          message: "Product has been added successfully",
+        });
+      } else {
+        return res.status(403).send({
+          status: "error",
+          message: "You cannot add your own product to the cart",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send({
+        status: "error",
+        error: "There was an error adding the product to the cart",
+      });
+    }
   }
-});
+);
 
 router.put("/:cid", async (req, res) => {
   const cartId = req.params.cid;
@@ -146,7 +193,7 @@ router.delete("/:cid/products/:pid", async (req, res) => {
   }
 });
 
-//Fetch details of a specific cart by ID
+// GET /carts/:cid - Fetch details of a specific cart by ID
 router.get("/:cid", async (req, res) => {
   try {
     const result = await cartController.getProductsFromCartByID(req.params.cid);
@@ -163,53 +210,59 @@ router.get("/:cid", async (req, res) => {
   }
 });
 
-//Finalize the purchase process for a cart
-router.post("/:cid/purchase", async (req, res) => {
-  try {
-    //Get purchaser's email (assuming it's stored in req.user.email)
-    const purchaser = req.user.email;
-    const cartId = req.params.cid;
+// POST /carts/:cid/purchase - Finalize the purchase process for a cart
+router.post(
+  "/:cid/purchase",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    console.log("the user is", req.user);
+    try {
+      // console.log("req.user:", req.user);
+      // Step 1: Get purchaser's email (assuming it's stored in req.user.email)
+      const purchaser = req.user.user.email;
+      const cartId = req.params.cid;
 
-    //Purchase cart and get products that couldn't be processed
-    const notProcessed = await cartController.purchaseCart(cartId);
+      // Step 2: Purchase cart and get products that couldn't be processed
+      const { processed, notProcessed } = await cartController.purchaseCart(
+        cartId
+      );
 
-    //Calculate total amount from the processed items in cart
-    const cart = await cartController.getProductsFromCartByID(cartId);
-    let amount = 0;
-    for (const cartProduct of cart.products) {
-      amount += cartProduct.product.price * cartProduct.quantity;
+      // Step 3: Calculate total amount from the processed items in cart
+      const cart = await cartController.getProductsFromCartByID(cartId);
+      let amount = 0;
+      for (const cartProduct of cart.products) {
+        amount += cartProduct.product.price * cartProduct.quantity;
+      }
+
+      // Step 4: Create ticket for the purchase
+      const ticket = await ticketController.createTicket(
+        purchaser,
+        amount,
+        processed,
+        cartId
+      );
+
+      console.log(purchaser);
+
+      // Step 5: Update cart with products that were not successfully processed
+      // await cartController.updateCartWithNotProcessed(cartId, notProcessed);
+
+      // Step 6: Send response
+      res.send({
+        status: "success",
+        payload: {
+          ticket,
+          notProcessed,
+        },
+      });
+    } catch (error) {
+      console.error("Error en cartRouter ", error);
+      res.status(400).send({
+        status: "error",
+        message: error.message,
+      });
     }
-
-    const ticket = await ticketController.createTicket(
-      purchaser,
-      amount,
-      cartId
-    );
-
-    //Update cart with products that were not successfully processed
-    await cartController.updateCartWithNotProcessed(cartId, notProcessed);
-
-    res.send({
-      status: "success",
-      payload: {
-        ticket,
-        notProcessed,
-      },
-    });
-
-    res.render("ticket", {
-      title: "Ticket",
-      ticket: ticket,
-      notProcessed: notProcessed,
-    });
-  } catch (error) {
-    req.logger.warning("Cannot create ticket");
-    console.error(error);
-    res.status(400).send({
-      status: "error",
-      message: error.message,
-    });
   }
-});
+);
 
 export default router;

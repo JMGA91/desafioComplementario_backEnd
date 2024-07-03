@@ -36,7 +36,7 @@ export default class UserService {
     if (!user) throw new Error("Invalid user!");
 
     if (isValidPassword(user, password)) {
-      const token = jwt.sign(user, secretKey, { expiresIn: "2h" });
+      const token = jwt.sign(user, secretKey, { expiresIn: "1h" });
       return { token, user };
     } else {
       throw new Error("Invalid Password!");
@@ -53,5 +53,21 @@ export default class UserService {
 
   async findUserById(userId) {
     return await this.userRepository.findUserById(userId);
+  }
+
+  async updatePassword(userId, newPassword) {
+    const hashedPassword = createHash(newPassword);
+    return await this.userRepository.updatePassword(userId, hashedPassword);
+  }
+
+  async getUserByToken(token) {
+    return await this.userRepository.getUserByToken(token);
+  }
+
+  async updateRole(userId, newRole) {
+    if (!["student", "premium"].includes(newRole)) {
+      throw new Error("Invalid role");
+    }
+    return await this.userRepository.updateRole(userId, newRole);
   }
 }

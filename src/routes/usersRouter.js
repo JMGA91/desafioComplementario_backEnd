@@ -1,32 +1,19 @@
 import { Router } from "express";
 import userController from "../controllers/userController.js";
-import cartController from "../repository/cartRepository.js";
-import { generateToken, authToken } from "../utils/utils.js";
+import { generateToken } from "../utils/utils.js";
 import passport from "passport";
+import { auth } from "../middlewares/auth.js";
 
 const router = Router();
 
 const userControllerDB = new userController();
-const cartControllerDB = new cartController();
 
-router.get("/users", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const result = await userControllerDB.getUsers();
     res.send({ users: result });
   } catch (error) {
     console.error(error);
-  }
-});
-
-router.post("/register", async (req, res) => {
-  const user = req.body;
-  try {
-    const response = await userControllerDB.registerUser(user);
-    const cart = await cartControllerDB.createCart();
-    await userControllerDB.updateUser(response._id, cart._id);
-    res.redirect("/user");
-  } catch (error) {
-    res.redirect("/register");
   }
 });
 
@@ -37,12 +24,13 @@ router.post("/login", async (req, res) => {
     const user = await userControllerDB.findUserEmail(email);
     if (!user || password !== user.password) {
       req.session.failLogin = true;
+      console.log("contraseña incorrecta");
       return res.redirect("/login");
     }
     req.session.user = user;
     const access_token = generateToken(user);
-    res.cookie("access_token", access_token);
-    res.redirect("/user");
+    res.cookie("access_token", access_token).json("success", access_token);
+    // res.redirect("/user");
   } catch (error) {
     console.error("Error during login:", error);
     req.session.failLogin = true;
@@ -71,6 +59,82 @@ router.get(
       status: "success",
       user: filteredUser,
     });
+  }
+);
+
+// Route to switch user role
+router.get(
+  "/premium/:uid",
+  passport.authenticate("jwt", { session: false }),
+  auth("user"),
+  async (req, res) => {
+    try {
+      const user = await userControllerDB.findUserById(req.params.uid);
+      const roles = ["user", "premium"];
+
+      if (req.user.user.role !== "admin") {
+        return res.status(401).json({
+          error: "Unauthorized",
+          message: "You do not have permission to access this area.",
+        });
+      }
+
+      res.render("switchRole", {
+        title: "Role Switcher",
+        user: user,
+        role: roles,
+      });
+    } catch (error) {
+      res.status(400).send({
+        status: "error",
+        message: error.message,
+      });
+    }
+  }
+);
+
+router.get(
+  "/premium/:uid",
+  passport.authenticate("jwt", { session: false }),
+  auth("user"),
+  async (req, res) => {
+    try {
+      const user = await userControllerDB.findUserById(req.params.uid);
+      const roles = ["user", "premium"];
+
+      if (req.user.user.role !== "admin") {
+        return res.status(401).json({
+          error: "Unauthorized",
+          message: "You do not have permission to access this area.",
+        });
+      }
+
+      res.render("switchRoleView", {
+        title: "Role Switcher",
+        user: user,
+        role: roles,
+      });
+    } catch (error) {
+      res.status(400).send({
+        status: "error",
+        message: error.message,
+      });
+    }
+  }
+);
+
+router.put(
+  "/premium/:uid",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const { uid } = req.params;
+      const { role } = req.body;
+      const updatedUser = await userControllerDB.updateRole(uid, role);
+      res.status(200).json({ success: true, user: updatedUser });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
   }
 );
 

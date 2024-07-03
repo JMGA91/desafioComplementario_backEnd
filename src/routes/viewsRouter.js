@@ -8,6 +8,8 @@ import { authToken } from "../utils/utils.js";
 import passport from "passport";
 import { auth } from "../middlewares/auth.js";
 import { generateProducts } from "../utils/fakerUtil.js";
+import { transport } from "../utils/mailUtil.js";
+import __dirname from "../utils/constantsUtil.js";
 
 const router = Router();
 const productController = new ProductController();
@@ -71,6 +73,8 @@ router.get(
   async (req, res) => {
     let { limit = 5, page = 1 } = req.query;
     try {
+      const user = await userController.findUserById(req.user.user._id);
+      const products = await productController.getAllProducts(limit, page);
       res.render("products", {
         title: "Productos",
         style: "index.css",
@@ -117,7 +121,7 @@ router.get(
       res.render("messageService", {
         title: "Chat",
         style: "index.css",
-        messages: messages,
+        messages,
       });
     } catch (error) {
       console.error(error);
@@ -141,7 +145,7 @@ router.get(
       res.render("cart", {
         title: "Flameshop Cart",
         style: "index.css",
-        cartId: cartId,
+        cartId,
         products: cart.products || [],
         user: req.user,
       });
@@ -208,6 +212,101 @@ router.get("/loggertest", (req, res) => {
   req.logger.debug("Logger test debug message");
 
   res.send("Logger test completed!");
+});
+
+// Send email route
+router.get("/send/mail", async (req, res) => {
+  try {
+    const result = await transport.sendMail({
+      from: "JMG <jmgaleman@gmail.com>",
+      to: "jmgaleman@gmail.com",
+      subject: "Testing email",
+      html: `<div>
+                <h1>We are testing!</h1>
+                <p>Hello user welcome to our community</p>
+              </div>`,
+    });
+
+    res.send({ status: "success", result });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send({ status: "error", message: "Error in send email!" });
+  }
+});
+
+// Recover password routes
+router.get("/recover", (_req, res) => {
+  res.render("recoverView", {
+    title: "Recover email",
+    style: "index.css",
+  });
+});
+
+router.get("/recover/:token", async (req, res) => {
+  const { token } = req.params;
+  try {
+    const user = await userController.getUserByToken(token);
+
+    if (!user) {
+      return res.status(404).render("recoverView", { error: "Invalid token" });
+    }
+
+    res.render("changePasswordView", { user, token });
+  } catch (error) {
+    res.status(500).render("recoverView", {
+      error: "Token has expired. Please request a new password recovery link.",
+      token,
+    });
+  }
+});
+
+router.post("/recover", async (req, res) => {
+  const { email } = req.body;
+  try {
+    const result = await userController.sendPasswordRecoveryEmail(email);
+    console.log(result);
+    res.render("emailSent", {
+      title: "Email Sent",
+      style: "index.css",
+      message: "Check your email for password recovery instructions",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error recovering password" });
+  }
+});
+
+router.post("/changePassword", async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  try {
+    const user = await userController.getUserByToken(token);
+
+    if (!user) {
+      return res.status(404).json({ error: "Invalid token" });
+    }
+
+    if (isValidPassword(user, newPassword)) {
+      return res
+        .status(400)
+        .json({ error: "New password cannot be the same as old password" });
+    }
+
+    await userController.updatePassword(user._id, newPassword);
+    res.json({ success: "Password changed successfully" });
+  } catch (error) {
+    res.status(500).json({
+      error: "Token has expired. Please request a new password recovery link.",
+    });
+  }
+});
+
+// Route for the "Email Sent" page
+router.get("/email-sent", (req, res) => {
+  res.render("emailSent", {
+    title: "Email Sent",
+    style: "index.css",
+  });
 });
 
 export default router;

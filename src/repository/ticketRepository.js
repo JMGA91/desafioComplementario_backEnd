@@ -29,23 +29,8 @@ export default class TicketRepository {
 
   async createTicket(ticketData) {
     try {
-      const { purchaseDateTime, amount, products, purchaser } = ticketData;
-
-      // Find the user by email
-      const user = await userModel.findOne({ email: purchaser });
-      if (!user) {
-        throw new Error("Purchaser not found");
-      }
-
       const code = await this.generateTicketCode();
-      const newTicketDTO = new TicketDTO({
-        code,
-        purchaseDateTime,
-        amount,
-        products,
-        purchaser: user._id,
-      });
-      return await this.ticketDao.create(newTicketDTO);
+      return await this.ticketDao.create({ ...ticketData, code });
     } catch (error) {
       console.error(error.message);
       throw new Error("Error creating ticket in repository");

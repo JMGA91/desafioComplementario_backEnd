@@ -13,17 +13,46 @@ export default class CartDao {
     return await Cart.findById(cid).populate("products.product").lean();
   }
 
-  async addCart(cartid, productId, quantity) {
-    const cart = await Cart.findOne({ _id: cartid });
-    if (!cart) throw new Error(`Cart with ID ${cartid} not found`);
-
-    const existingProduct = cart.products.find(
-      (product) => product.product.toString() === productId
+  async addCart(cartId, productId, quantity) {
+    console.log(
+      "CartDao.addCart - cartId:",
+      cartId,
+      "productId:",
+      productId,
+      "quantity:",
+      quantity
     );
+
+    if (!productId || !quantity) {
+      console.error("Invalid productId or quantity");
+      throw new Error("Invalid productId or quantity");
+    }
+
+    const cart = await Cart.findOne({ _id: cartId });
+    if (!cart) {
+      console.error(`Cart with ID ${cartId} not found`);
+      throw new Error(`Cart with ID ${cartId} not found`);
+    }
+
+    // Validate existing product quantities
+    cart.products = cart.products.map((product) => {
+      product.quantity
+        ? product.quantity[0]
+        : `Invalid quantity for product ${product.product}:`;
+      return product;
+    });
+
+    const existingProduct = cart.products.find((product) => {
+      console.log("Checking product:", product); // Log each product in cart
+      return (
+        product.product && product.product.toString() === productId.toString()
+      );
+    });
+
     if (existingProduct) {
       existingProduct.quantity += quantity;
     } else {
-      cart.products.push({ product: productId, quantity });
+      cart.products.push({ product: productId, quantity: quantity });
     }
 
     await cart.save();
@@ -33,7 +62,7 @@ export default class CartDao {
   async updateQuantity(cartId, productId, quantity) {
     return await Cart.updateOne(
       { _id: cartId, "products.product": productId },
-      { $set: { "products.$.quantity": quantity } }
+      { $set: { "products.quantity": quantity } }
     );
   }
 
@@ -64,23 +93,5 @@ export default class CartDao {
     });
 
     return stockDetails;
-  }
-  async updateCartWithNotProcessed(cartId, notProcessed) {
-    try {
-      const cart = await CartModel.findById(cartId);
-
-      // Filter out processed products
-      cart.products = cart.products.filter((cartProduct) => {
-        return notProcessed.some(
-          (np) => np.product.toString() === cartProduct.product.toString()
-        );
-      });
-
-      await cart.save();
-      return cart;
-    } catch (error) {
-      console.error(error);
-      throw new Error("Error updating cart with not processed products");
-    }
   }
 }

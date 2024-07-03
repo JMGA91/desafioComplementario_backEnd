@@ -1,11 +1,17 @@
 import { userModel } from "../models/userModel.js";
+import * as dotenv from "dotenv";
+import jwt from "passport-jwt";
+dotenv.config();
+
+const secretKey = process.env.SECRET_KEY;
 
 export default class UserDao {
   async getAll() {
     return await userModel
       .find({})
       .populate("cart")
-      .populate("cart.products.product");
+      .populate("cart.products.product")
+      .lean();
   }
 
   async create(user) {
@@ -13,7 +19,7 @@ export default class UserDao {
   }
 
   async findByEmail(email) {
-    return await userModel.findOne({ email });
+    return await userModel.findOne({ email }).lean();
   }
 
   async update(userId, cartId) {
@@ -21,6 +27,24 @@ export default class UserDao {
   }
 
   async findById(userId) {
-    return await userModel.findById(userId);
+    return await userModel.findById(userId).lean();
+  }
+
+  async updatePassword(userId, newPassword) {
+    return await userModel.findByIdAndUpdate(userId, { password: newPassword });
+  }
+
+  async getUserByToken(token) {
+    //ask if I should use passport here
+    const decoded = jwt.verify(token, secretKey);
+    return await userModel.findOne({ email: decoded.email }).lean();
+  }
+
+  async updateRole(userId, newRole) {
+    return await userModel.findByIdAndUpdate(
+      userId,
+      { role: newRole },
+      { new: true }
+    );
   }
 }

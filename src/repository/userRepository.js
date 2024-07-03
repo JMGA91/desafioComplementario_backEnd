@@ -44,4 +44,24 @@ export default class UserRepository {
       throw new Error("Error finding user by ID: " + error.message);
     }
   }
+
+  async updatePassword(userId, newPassword) {
+    try {
+      return await this.userDao.updatePassword(userId, newPassword);
+    } catch (error) {
+      throw new Error("Error updating password: " + error.message);
+    }
+  }
+
+  async getUserByToken(token) {
+    try {
+      return await this.userDao.getUserByToken(token);
+    } catch (error) {
+      throw new Error("Error getting user by token: " + error.message);
+    }
+  }
+
+  async updateRole(userId, newRole) {
+    return await this.userDao.updateRole(userId, newRole);
+  }
 }

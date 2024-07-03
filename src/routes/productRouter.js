@@ -7,6 +7,7 @@ import { uploader } from "../utils/multerUtil.js";
 import passport from "passport";
 import { auth } from "../middlewares/auth.js";
 import productModel from "../models/productModel.js";
+import { checkOwnership } from "../utils/checkOwnershipUtil.js";
 
 const router = Router();
 const productController = new ProductController();
@@ -41,7 +42,7 @@ router.get("/", async (req, res) => {
 router.post(
   "/",
   passport.authenticate("jwt", { session: false }),
-  auth("admin"),
+  auth("admin", "premium"),
   uploader.array("thumbnails", 3),
   async (req, res) => {
     if (req.files) {
@@ -50,35 +51,45 @@ router.post(
 
     const { title, description, code, price, status, stock, category } =
       req.body;
-
-    if (
-      !title ||
-      !description ||
-      !code ||
-      !price ||
-      typeof status === "undefined" ||
-      !stock ||
-      !category
-    ) {
-      const product = {
-        title,
-        description,
-        code,
-        price,
-        status,
-        stock,
-        category,
-      };
-      const errorInfo = generateProductsErrorInfo(product);
-      return CustomError.createError({
-        name: "Product creation error",
-        cause: errorInfo,
-        message: "Error trying to create Product",
-        code: ErrorCodes.INVALID_TYPES_ERROR,
-      });
-    }
+    let { owner } = req.body;
 
     try {
+      if (
+        !title ||
+        !description ||
+        !code ||
+        !price ||
+        typeof status === "undefined" ||
+        !stock ||
+        !category
+      ) {
+        const product = {
+          title,
+          description,
+          code,
+          price,
+          status,
+          stock,
+          category,
+          owner,
+        };
+        const errorInfo = generateProductsErrorInfo(product);
+        return CustomError.createError({
+          name: "Product creation error",
+          cause: errorInfo,
+          message: "Error trying to create Product",
+          code: ErrorCodes.INVALID_TYPES_ERROR,
+        });
+      }
+
+      if (req.user.user.role === "premium") {
+        owner = req.user.user.email;
+      } else {
+        owner = "admin";
+      }
+
+      req.body.owner = owner;
+
       const result = await productController.createProduct(req.body);
       res.send({
         status: "success",
@@ -118,21 +129,49 @@ router.put("/:pid", uploader.array("thumbnails", 3), async (req, res) => {
   }
 });
 
-router.delete("/:pid", async (req, res) => {
-  try {
-    const result = await productController.deleteProduct(req.params.pid);
-    res.send({
-      status: "success",
-      payload: result,
-    });
-  } catch (error) {
-    req.logger.warning("Cannot delete product");
-    res.status(400).send({
-      status: "error",
-      message: error.message,
-    });
+router.delete(
+  "/:pid",
+  passport.authenticate("jwt", { session: false }),
+  auth("admin", "premium"),
+  async (req, res) => {
+    try {
+      const product = await productController.getProductByID(req.params.pid);
+      const pid = req.params.pid;
+      const email = req.user.user.email;
+      let proceedWithDelete = true;
+
+      if (!product) {
+        return res.status(404).send({
+          status: "error",
+          message: "Product not found",
+        });
+      }
+
+      // Check if its a premiun or admin user
+      if (req.user.user.role === "premium") {
+        proceedWithDelete = await checkOwnership(pid, email);
+      }
+
+      if (proceedWithDelete) {
+        await productController.deleteProduct(pid);
+        return res.status(200).send({
+          status: "success",
+          message: "Product erased",
+        });
+      } else {
+        return res.status(403).send({
+          status: "error",
+          message: "You do not have permissions to erase products",
+        });
+      }
+    } catch (error) {
+      return res.status(500).send({
+        status: "error",
+        message: error.message,
+      });
+    }
   }
-});
+);
 
 router.get("/search", async (req, res) => {
   try {

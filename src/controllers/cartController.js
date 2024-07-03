@@ -103,40 +103,51 @@ class CartController {
       // Step 1: Get the cart and its products
       const cart = await this.cartService.getProductsFromCartByID(cartId);
       const notProcessed = [];
-      let amount = 0;
+      const processed = [];
 
       // Step 2: Process each product
       for (const cartProduct of cart.products) {
-        const product = await productModel.findById(cartProduct.product._id);
+        if (!cartProduct.product) {
+          console.error(`Invalid product in cart: ${cartProduct}`);
+          continue;
+        }
 
+        const product = await productModel.findById(cartProduct.product._id);
         if (product.stock >= cartProduct.quantity) {
           // Deduct the quantity from the product's stock
           product.stock -= cartProduct.quantity;
           await product.save();
-
-          // Calculate the total amount
-          amount += product.price * cartProduct.quantity;
+          processed.push(cartProduct);
+          console.log("Product procesado", cartProduct);
         } else {
           // If there's not enough stock, add to notProcessed
-          notProcessed.push({
-            product: cartProduct.product._id,
-            quantity: cartProduct.quantity,
-          });
+          console.log("Producto no procesado", cartProduct);
+          const remainingQuantity = cartProduct.quantity - product.stock;
+          if (remainingQuantity > 0) {
+            notProcessed.push({
+              product: cartProduct.product.id,
+              quantity: remainingQuantity,
+            });
+            await this.updateProductQuantity(
+              cartId,
+              product._id,
+              remainingQuantity
+            );
+            processed.push({
+              product: cartProduct.product.id,
+              quantity: product.stock,
+            });
+            product.stock = 0;
+            await product.save();
+          }
         }
       }
 
       // Step 3: Create the ticket for the purchase
-      const ticket = await this.ticketController.createTicket({
-        purchaser: req.user.email, // Ensure req.user.email is defined
-        cart: cartId,
-      });
-
       // Step 4: Remove processed products from the cart
-      await this.cartService.updateCartWithNotProcessed(cartId, notProcessed);
-
       // Step 5: Send response
       return {
-        ticket,
+        processed,
         notProcessed,
       };
     } catch (error) {
@@ -145,17 +156,6 @@ class CartController {
     }
   }
 
-  async updateCartWithNotProcessed(cartId, notProcessed) {
-    try {
-      return await this.cartService.updateCartWithNotProcessed(
-        cartId,
-        notProcessed
-      );
-    } catch (error) {
-      console.error(error);
-      throw new Error("Error updating cart with not processed products");
-    }
-  }
 }
 
 export default CartController;
