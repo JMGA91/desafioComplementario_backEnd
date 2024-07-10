@@ -143,9 +143,6 @@ class CartController {
         }
       }
 
-      // Step 3: Create the ticket for the purchase
-      // Step 4: Remove processed products from the cart
-      // Step 5: Send response
       return {
         processed,
         notProcessed,
@@ -155,7 +152,6 @@ class CartController {
       throw new Error("Error purchasing cart");
     }
   }
-
 }
 
 export default CartController;

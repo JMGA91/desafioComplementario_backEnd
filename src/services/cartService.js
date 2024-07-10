@@ -22,6 +22,14 @@ export default class CartService {
   }
 
   async addProductToCart(cartid, productId, quantity) {
+    console.log(
+      "CartService.addProductToCart - cartid:",
+      cartid,
+      "productId:",
+      productId,
+      "quantity:",
+      quantity
+    );
     return await this.cartRepository.addProductToCart(
       cartid,
       productId,
@@ -89,19 +97,6 @@ export default class CartService {
     } catch (error) {
       console.error(error.message);
       throw new Error("Error purchasing cart");
-    }
-  }
-
-  async updateCartWithNotProcessed(cartId, notProcessed) {
-    try {
-      // Update cart with products that were not successfully processed
-      return await this.cartRepository.updateCartWithNotProcessed(
-        cartId,
-        notProcessed
-      );
-    } catch (error) {
-      console.error(error.message);
-      throw new Error("Error updating cart with not processed products");
     }
   }
 

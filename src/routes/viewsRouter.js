@@ -3,60 +3,63 @@ import ProductController from "../controllers/productController.js";
 import MessageController from "../controllers/messageController.js";
 import CartController from "../controllers/cartController.js";
 import UserController from "../controllers/userController.js";
-import TicketController from "../controllers/ticketController.js";
-import { authToken } from "../utils/utils.js";
 import passport from "passport";
 import { auth } from "../middlewares/auth.js";
 import { generateProducts } from "../utils/fakerUtil.js";
 import { transport } from "../utils/mailUtil.js";
 import __dirname from "../utils/constantsUtil.js";
+import { createHash, isValidPassword } from "../utils/functionUtil.js";
 
 const router = Router();
 const productController = new ProductController();
 const cartController = new CartController();
 const messageController = new MessageController();
 const userController = new UserController();
-const ticketController = new TicketController();
 
+// Home route
 router.get("/", (req, res) => {
   res.render("home", {
-    title: "Flameshop | Home",
+    title: "FlameShop | Home",
     style: "index.css",
   });
 });
 
+// Login route
 router.get("/login", async (req, res) => {
   if (req.cookies.auth) {
     res.redirect("/user");
   } else {
     res.render("login", {
-      title: "Flameshop | Login",
+      title: "FlameShop | Login",
       style: "index.css",
       failLogin: req.session.failLogin ?? false,
     });
   }
 });
 
+// Register route
 router.get("/register", (req, res) => {
   if (req.cookies.auth) {
     res.redirect("/user");
   }
   res.render("register", {
-    title: "Flameshop | Register",
+    title: "FlameShop | Register",
     style: "index.css",
     failRegister: req.session.failRegister ?? false,
   });
 });
 
+// User route
 router.get(
   "/user",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
+      const user = await userController.findUserById(req.user.user._id);
       res.render("user", {
-        title: "Flameshop | Usuario",
+        title: "FlameShop | Usuario",
         style: "index.css",
-        user: req.user.user,
+        user,
         cart: [],
       });
     } catch (error) {
@@ -66,6 +69,7 @@ router.get(
   }
 );
 
+// Products route
 router.get(
   "/products",
   passport.authenticate("jwt", { session: false }),
@@ -78,8 +82,8 @@ router.get(
       res.render("products", {
         title: "Productos",
         style: "index.css",
-        user: await userController.findUserById(req.user.user._id),
-        products: await productController.getAllProducts(limit, page),
+        user,
+        products,
       });
     } catch (error) {
       res.status(403).send({
@@ -90,6 +94,7 @@ router.get(
   }
 );
 
+// Real-time products route
 router.get(
   "/realtimeproducts",
   passport.authenticate("jwt", { session: false }),
@@ -98,7 +103,7 @@ router.get(
     try {
       const products = await productController.getAllProducts();
       res.render("realTimeProducts", {
-        title: "Products",
+        title: "Productos",
         style: "index.css",
         products,
       });
@@ -111,6 +116,7 @@ router.get(
   }
 );
 
+// Chat route
 router.get(
   "/chat",
   passport.authenticate("jwt", { session: false }),
@@ -130,6 +136,7 @@ router.get(
   }
 );
 
+// Cart route
 router.get(
   "/cart",
   passport.authenticate("jwt", { session: false }),
@@ -143,7 +150,7 @@ router.get(
       }
       const cart = await cartController.getProductsFromCartByID(cartId);
       res.render("cart", {
-        title: "Flameshop Cart",
+        title: "FlameShop Cart",
         style: "index.css",
         cartId,
         products: cart.products || [],
@@ -156,6 +163,7 @@ router.get(
   }
 );
 
+// Unauthorized route
 router.get("/unauthorized", (req, res) => {
   res.status(401).render("unauthorized", {
     title: "Unauthorized",
@@ -163,24 +171,7 @@ router.get("/unauthorized", (req, res) => {
   });
 });
 
-router.get(
-  "/ticket/:tid",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    try {
-      const ticket = await ticketController.getTicketById(req, res);
-      res.render("ticket", {
-        title: "Ticket",
-        style: "index.css",
-        ticket: ticket,
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("Internal Server Error");
-    }
-  }
-);
-
+// Mocking products route
 router.get("/mockingproducts", (req, res) => {
   const productsPerPage = 5;
   const currentPage = parseInt(req.query.page) || 1;
@@ -203,6 +194,7 @@ router.get("/mockingproducts", (req, res) => {
   });
 });
 
+// Logger test route
 router.get("/loggertest", (req, res) => {
   req.logger.fatal("Logger test fatal message");
   req.logger.error("Logger test error message");
@@ -220,10 +212,10 @@ router.get("/send/mail", async (req, res) => {
     const result = await transport.sendMail({
       from: "JMG <jmgaleman@gmail.com>",
       to: "jmgaleman@gmail.com",
-      subject: "Testing email",
+      subject: "Correo de prueba",
       html: `<div>
                 <h1>We are testing!</h1>
-                <p>Hello user welcome to our community</p>
+                <p>Hello user welcome to FlameShop</p>
               </div>`,
     });
 
@@ -246,13 +238,17 @@ router.get("/recover/:token", async (req, res) => {
   const { token } = req.params;
   try {
     const user = await userController.getUserByToken(token);
-
     if (!user) {
       return res.status(404).render("recoverView", { error: "Invalid token" });
     }
-
-    res.render("changePasswordView", { user, token });
+    res.render("changePasswordView", {
+      title: "Change Password View",
+      style: "index.css",
+      user,
+      token,
+    });
   } catch (error) {
+    console.error("Error in recover route:", error);
     res.status(500).render("recoverView", {
       error: "Token has expired. Please request a new password recovery link.",
       token,
@@ -262,6 +258,8 @@ router.get("/recover/:token", async (req, res) => {
 
 router.post("/recover", async (req, res) => {
   const { email } = req.body;
+  console.log("Received email:", email);
+
   try {
     const result = await userController.sendPasswordRecoveryEmail(email);
     console.log(result);
@@ -292,9 +290,11 @@ router.post("/changePassword", async (req, res) => {
         .json({ error: "New password cannot be the same as old password" });
     }
 
-    await userController.updatePassword(user._id, newPassword);
+    const hashedPassword = createHash(newPassword);
+    await userController.updatePassword(user._id, hashedPassword);
     res.json({ success: "Password changed successfully" });
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       error: "Token has expired. Please request a new password recovery link.",
     });

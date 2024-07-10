@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
+/* Variables y configuraciones globales */
 :root {
   --primary-color: #00ff41;
   --secondary-color: #ff00ff;
@@ -10,6 +11,7 @@
   --transition: all 0.3s ease;
 }
 
+/* Estilos generales */
 * {
   background-color: var(--background-color);
   color: var(--primary-color);
@@ -17,6 +19,7 @@
   transition: var(--transition);
 }
 
+/* Estilos para elementos específicos */
 hr {
   width: 100%;
   border: 1px solid var(--secondary-color);
@@ -34,6 +37,7 @@ input, button, .button, .button-create, .button-delete, .next, .prev, .add-to-ca
   border-radius: var(--border-radius);
 }
 
+/* Estilos para botones y formularios */
 input {
   background: var(--background-color);
   color: var(--primary-color);
@@ -53,6 +57,7 @@ button, .button, .button-create, .button-delete, .next, .prev, .add-to-cart-butt
   border: 1px solid var(--primary-color);
 }
 
+/* Estilos para cajas y contenedores */
 .box, .products-form, .product-card, .boxMessages, .cart, .register-container {
   background-color: var(--box-background-color);
   border: 1px solid var(--primary-color);
@@ -155,7 +160,7 @@ body {
   text-decoration: none;
 }
 
-/* Specific Styles for Register Form */
+/* Estilos específicos del formulario de registro */
 .register-container {
   max-width: 400px;
   margin: 0 auto;
@@ -200,7 +205,6 @@ textarea {
   width: calc(100% - 20px);
 }
 
-
 .register-form button.submit {
   width: 100%;
   padding: 10px;
@@ -235,4 +239,175 @@ img {
   height: auto;
   margin: 20px 0;
   border: 2px solid var(--primary-color);
+}
+
+/* Estilos adicionales de index2.css */
+.products-box {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 1000px;
+}
+
+.products-form form {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+.products-form input {
+  margin-bottom: 5px;
+}
+
+#button-create, #button-delete {
+  background-color: #d78383;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+#button-create:hover, #button-delete:hover {
+  background-color: #b86f6f;
+}
+
+.boxMessages {
+  margin-left: 10px;
+  margin-top: 2rem;
+}
+
+.box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.item-actions {
+  display: flex;
+  align-items: center;
+}
+
+.remove-item {
+  padding: 5px 10px;
+  background-color: #d78383;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.remove-item:hover {
+  background-color: #b86f6f;
+}
+
+.checkout-btn, .clear-cart-btn {
+  padding: 10px 20px;
+  background-color: #d78383;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-left: 10px;
+}
+
+.checkout-btn:hover, .clear-cart-btn:hover {
+  background-color: #b86f6f;
+}
+
+.next, .prev {
+  background-color: #d78383;
+  color: #fff;
+  border: none;
+  padding: 5px;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-family: 'Montserrat', sans-serif;
+  text-decoration: none;
+  text-align: center;
+  margin: 2rem;
+  width: 5rem;
+}
+
+.add-to-cart-button {
+  background-color: #d78383;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.add-to-cart-button:hover {
+  background-color: #a54242;
+}
+
+.cart-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.cart-title {
+  color: #333;
+}
+
+.cart-items {
+  margin-bottom: 20px;
+}
+
+.item-name {
+  color: #333;
+  font-weight: bold;
+}
+
+.item-description {
+  color: #666;
+}
+
+.item-price {
+  color: #d78383;
+  font-weight: bold;
+}
+
+.item-quantity {
+  color: #666;
+}
+
+.cart-total {
+  text-align: right;
+  margin-bottom: 20px;
+}
+
+.cart-total p {
+  font-weight: bold;
+}
+
+.cart-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cart {
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  margin: 0 auto;
+  max-width: 800px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.cart-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.cart-title {
+  color: #333;
 }

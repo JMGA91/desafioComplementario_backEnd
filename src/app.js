@@ -17,6 +17,8 @@ import sessionRouter from "./routes/sessionRouter.js";
 import * as dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import { addLogger, startLogger } from "./utils/loggerUtil.js";
+import swaggerJsdoc from "swagger-jsdoc";
+import swaggerUiExpress from "swagger-ui-express";
 
 dotenv.config({ path: "./src/mongo.env" });
 
@@ -74,6 +76,21 @@ app.use("/api/users", usersRouter);
 app.use("/api/products", productRouter);
 app.use("/api/cart", cartRouter);
 app.use("/", viewsRouter);
+
+//Swagger ApiDocs
+const swaggerOptions = {
+  definition: {
+    openapi: "3.1.0",
+    info: {
+      title: "YesFitness",
+      version: "1.0.0",
+      description: "API for YesFitness",
+    },
+  },
+  apis: [`${__dirname}/../docs/**/*.yaml`],
+};
+const specs = swaggerJsdoc(swaggerOptions);
+app.use("/apidocs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
 // Start server
 const PORT = 8080;

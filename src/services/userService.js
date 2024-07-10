@@ -1,5 +1,5 @@
 import UserRepository from "../repository/userRepository.js";
-import { isValidPassword } from "../utils/functionUtil.js";
+import { createHash, isValidPassword } from "../utils/functionUtil.js";
 import jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";
 dotenv.config();
@@ -56,8 +56,7 @@ export default class UserService {
   }
 
   async updatePassword(userId, newPassword) {
-    const hashedPassword = createHash(newPassword);
-    return await this.userRepository.updatePassword(userId, hashedPassword);
+    return await this.userRepository.updatePassword(userId, newPassword);
   }
 
   async getUserByToken(token) {
@@ -65,7 +64,7 @@ export default class UserService {
   }
 
   async updateRole(userId, newRole) {
-    if (!["student", "premium"].includes(newRole)) {
+    if (!["user", "premium"].includes(newRole)) {
       throw new Error("Invalid role");
     }
     return await this.userRepository.updateRole(userId, newRole);

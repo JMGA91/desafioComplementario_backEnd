@@ -77,12 +77,18 @@ export default class UserController {
     const token = jwt.sign({ email: user.email }, secretKey, {
       expiresIn: "1h",
     });
-    const link = `http://localhost:8080/recover/${token}`;
     const mailOptions = {
       from: "FlameShop <jmgaleman@gmail.com>",
       to: email,
       subject: "Password Recovery",
-      html: `<p>Click on this link to recover your password: <a href="${link}">${link}</a></p>`,
+      html: `<div style="font-family: 'Montserrat', sans-serif; color: black;">
+                    <h1>Change your password</h1>
+                     <p>We have received a request to reset your password. If you did not made this request, please ignore this email.</p>
+                    <p>To reset your password, click the following link:</p>
+                    <p>This link will expire in 1 hour</p>
+                     <a href="http://localhost:8080/recover/${token}">
+                    <button class="button">Reset Password</button>
+                     </div>`,
     };
     transport.sendMail(mailOptions, (error) => {
       if (error) {

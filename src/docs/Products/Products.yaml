@@ -1,0 +1,202 @@
+openapi: 3.0.0
+info:
+  title: Product API
+  description: API for managing products, including CRUD operations and pagination.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api
+    description: Development server
+
+paths:
+  /products:
+    get:
+      summary: Retrieve all products with optional filters and pagination
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: The number of products to return
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: The page number to return
+        - in: query
+          name: sort
+          schema:
+            type: string
+          description: Sort order for products
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: Query string for filtering products
+      responses:
+        "200":
+          description: A paginated list of products
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  docs:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Product"
+                  totalDocs:
+                    type: integer
+                    description: Total number of products
+                  limit:
+                    type: integer
+                    description: Number of products per page
+                  page:
+                    type: integer
+                    description: Current page number
+                  totalPages:
+                    type: integer
+                    description: Total number of pages
+
+    post:
+      summary: Create a new product
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+        required: true
+      responses:
+        "201":
+          description: The created product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+
+  /products/{productId}:
+    get:
+      summary: Retrieve a specific product by ID
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The requested product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+
+    put:
+      summary: Update a specific product by ID
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductUpdate"
+        required: true
+      responses:
+        "200":
+          description: The updated product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+
+    delete:
+      summary: Delete a specific product by ID
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Confirmation of deletion
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  acknowledged:
+                    type: boolean
+                  deletedCount:
+                    type: integer
+                example:
+                  acknowledged: true
+                  deletedCount: 1
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the product
+        title:
+          type: string
+          description: The title of the product
+        description:
+          type: string
+          description: The description of the product
+        code:
+          type: string
+          description: The product code
+        price:
+          type: number
+          format: float
+          description: The price of the product
+        status:
+          type: boolean
+          description: The availability status of the product
+        stock:
+          type: integer
+          description: The stock quantity of the product
+        category:
+          type: string
+          description: The category of the product
+        thumbnails:
+          type: array
+          items:
+            type: string
+          description: List of thumbnail images for the product
+        owner:
+          type: string
+          description: The owner of the product
+          default: "teacher"
+
+    ProductUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        code:
+          type: string
+        price:
+          type: number
+          format: float
+        status:
+          type: boolean
+        stock:
+          type: integer
+        category:
+          type: string
+        thumbnails:
+          type: array
+          items:
+            type: string
+        owner:
+          type: string

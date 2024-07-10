@@ -1,6 +1,6 @@
 import { userModel } from "../models/userModel.js";
 import * as dotenv from "dotenv";
-import jwt from "passport-jwt";
+import jwt from "jsonwebtoken";
 dotenv.config();
 
 const secretKey = process.env.SECRET_KEY;
@@ -35,9 +35,9 @@ export default class UserDao {
   }
 
   async getUserByToken(token) {
-    //ask if I should use passport here
     const decoded = jwt.verify(token, secretKey);
-    return await userModel.findOne({ email: decoded.email }).lean();
+    const email = decoded.email;
+    return await userModel.findOne({ email }).lean();
   }
 
   async updateRole(userId, newRole) {
