@@ -2,13 +2,13 @@ import Assert from "assert";
 import mongoose from "mongoose";
 import UserDao from "../dao/userDao.js";
 import * as dotenv from "dotenv";
+
 dotenv.config();
 
 const uri = process.env.URI;
 
 mongoose.connect(uri, { dbName: "testing" });
 const dao = new UserDao();
-const assert = Assert.strict;
 const testUser = {
   firstName: "Testing",
   lastName: "Flameshop",
@@ -16,34 +16,57 @@ const testUser = {
   password: "test123456",
 };
 
-// This groups all the related tests together
 describe("Tests DAO Users", function () {
-  // Runs once before all tests start. Use it to set up anything needed for all tests.
-  before(function () {});
+  // Runs before starting the test suite
+  before(async function () {
+    try {
+      await mongoose.connection.collections.users.drop();
+    } catch (error) {
+      console.log("No collection to drop");
+    }
+  });
 
-  // Runs before each individual test. Use it to reset things so each test starts fresh.
+  // Runs before each individual test
   beforeEach(function () {
-    this.timeout(3000); // Set timeout to 3 seconds
+    this.timeout(3000);
   });
 
-  // Runs once after all tests finish. Use it to clean up things set up in before.
-  after(function () {
-    // mongoose.disconnect();
+  // Runs after the entire test suite
+  after(async function () {
+    await mongoose.disconnect();
   });
 
-  // Runs after each individual test. Use it to clean up after each test.
+  // Runs after each individual test
   afterEach(function () {});
 
-  // This is a single test.
-  it("getAll() should return all users", async function () {
+  it("getAll() should return an array of users", async function () {
     const result = await dao.getAll();
-    assert.strictEqual(Array.isArray(result), true);
-    console.log(result);
+    Assert.strictEqual(Array.isArray(result), true);
   });
 
-  it("create() should save my new user", async function () {
+  it("create() should save a new user", async function () {
     const result = await dao.create(testUser);
-    assert.strictEqual(typeof result, "object");
-    assert.ok(result._id);
+    Assert.strictEqual(typeof result, "object");
+    Assert.ok(result._id);
+  });
+
+  it("findByEmail() should return an object matching the desired email", async function () {
+    const result = await dao.findByEmail(testUser.email);
+    Assert.strictEqual(typeof result, "object");
+    Assert.ok(result._id);
+    Assert.strictEqual(result.email, testUser.email);
+    testUser._id = result._id;
+  });
+
+  it("update() should return an object with correctly modified data", async function () {
+    const modifiedEmail = "newemail@gmail.com";
+    const result = await dao.update(testUser._id, { email: modifiedEmail });
+    Assert.strictEqual(typeof result, "object");
+    Assert.ok(result._id);
+    Assert.strictEqual(result.email, modifiedEmail);
+  });
+
+  it("delete()", async function () {
+   
   });
 });
