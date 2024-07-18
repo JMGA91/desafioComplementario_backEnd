@@ -105,4 +105,12 @@ export default class UserController {
       throw new Error("Error updating role: " + error.message);
     }
   }
+
+  async deleteUserByEmail(userId) {
+    try {
+      return await this.userService.deleteUserByEmail(userId);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }

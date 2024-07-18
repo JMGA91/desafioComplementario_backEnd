@@ -34,16 +34,7 @@ export default class CartDao {
       throw new Error(`Cart with ID ${cartId} not found`);
     }
 
-    // Validate existing product quantities
-    cart.products = cart.products.map((product) => {
-      product.quantity
-        ? product.quantity[0]
-        : `Invalid quantity for product ${product.product}:`;
-      return product;
-    });
-
     const existingProduct = cart.products.find((product) => {
-      console.log("Checking product:", product); // Log each product in cart
       return (
         product.product && product.product.toString() === productId.toString()
       );
@@ -60,10 +51,12 @@ export default class CartDao {
   }
 
   async updateQuantity(cartId, productId, quantity) {
-    return await Cart.updateOne(
+    const updatedCart = await Cart.findOneAndUpdate(
       { _id: cartId, "products.product": productId },
-      { $set: { "products.quantity": quantity } }
+      { $set: { "products.$.quantity": quantity } },
+      { new: true }
     );
+    return updatedCart;
   }
 
   async delete(id) {
@@ -71,14 +64,21 @@ export default class CartDao {
   }
 
   async deleteProducts(cartId) {
-    return await Cart.findByIdAndUpdate(cartId, { products: [] });
+    const cart = await Cart.findByIdAndUpdate(
+      cartId,
+      { products: [] },
+      { new: true }
+    );
+    return cart;
   }
 
   async deleteProduct(cartId, productId) {
-    return await Cart.findOneAndUpdate(
+    const cart = await Cart.findOneAndUpdate(
       { _id: cartId },
-      { $pull: { products: { product: productId } } }
+      { $pull: { products: { product: productId } } },
+      { new: true }
     );
+    return cart;
   }
 
   async getStockFromProducts(cid) {

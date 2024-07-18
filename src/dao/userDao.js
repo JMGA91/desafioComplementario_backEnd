@@ -47,4 +47,8 @@ export default class UserDao {
       { new: true }
     );
   }
+
+  async deleteByEmail(userId) {
+    return await userModel.findOneAndDelete(userId).lean();
+  }
 }

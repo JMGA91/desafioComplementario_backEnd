@@ -1,4 +1,5 @@
-import Assert from "assert";
+// Chai testing
+import { expect } from "chai";
 import mongoose from "mongoose";
 import UserDao from "../dao/userDao.js";
 import * as dotenv from "dotenv";
@@ -7,12 +8,12 @@ dotenv.config();
 
 const uri = process.env.URI;
 
-mongoose.connect(uri, { dbName: "testing" });
+mongoose.connect(uri, { dbName: "testingChai" });
 const dao = new UserDao();
 const testUser = {
   firstName: "Testing",
-  lastName: "Flameshop",
-  email: "flameshoptest@gmail.com",
+  lastName: "flameShop",
+  email: "testingshop@gmail.com",
   password: "test123456",
 };
 
@@ -28,7 +29,7 @@ describe("Tests DAO Users", function () {
 
   // Runs before each individual test
   beforeEach(function () {
-    this.timeout(3000);
+    this.timeout(1000);
   });
 
   // Runs after the entire test suite
@@ -41,32 +42,42 @@ describe("Tests DAO Users", function () {
 
   it("getAll() should return an array of users", async function () {
     const result = await dao.getAll();
-    Assert.strictEqual(Array.isArray(result), true);
+    expect(result).to.be.an("array");
   });
 
   it("create() should save a new user", async function () {
     const result = await dao.create(testUser);
-    Assert.strictEqual(typeof result, "object");
-    Assert.ok(result._id);
+
+    // Check that the result is an object
+    expect(result).to.be.an("object");
+
+    // Check that the result has an ID
+    expect(result._id).to.be.not.null;
+
+    // Check that the user data matches the input
+    expect(result.email).to.equal(testUser.email);
   });
 
   it("findByEmail() should return an object matching the desired email", async function () {
     const result = await dao.findByEmail(testUser.email);
-    Assert.strictEqual(typeof result, "object");
-    Assert.ok(result._id);
-    Assert.strictEqual(result.email, testUser.email);
+
     testUser._id = result._id;
+    expect(result).to.be.an("object");
+    expect(result._id).to.be.not.null;
+    expect(result.email).to.be.equal(testUser.email);
   });
 
   it("update() should return an object with correctly modified data", async function () {
     const modifiedEmail = "newemail@gmail.com";
     const result = await dao.update(testUser._id, { email: modifiedEmail });
-    Assert.strictEqual(typeof result, "object");
-    Assert.ok(result._id);
-    Assert.strictEqual(result.email, modifiedEmail);
+    expect(result).to.be.an("object");
+    expect(result._id).to.be.not.null;
+    expect(result.email).to.be.equal(modifiedEmail);
   });
 
-  it("delete()", async function () {
-   
+  it("delete() should delete the user with the specified email", async function () {
+    const result = await dao.deleteByEmail(testUser.modifiedEmail);
+    expect(result).to.be.an("object");
+    expect(result._id).to.be.not.null;
   });
 });

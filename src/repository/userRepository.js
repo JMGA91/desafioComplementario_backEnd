@@ -64,4 +64,12 @@ export default class UserRepository {
   async updateRole(userId, newRole) {
     return await this.userDao.updateRole(userId, newRole);
   }
+
+  async deleteUserByEmail(userId) {
+    try {
+      return await this.userDao.deleteByEmail(userId);
+    } catch (error) {
+      throw new Error("Error deleting user: " + error.message);
+    }
+  }
 }

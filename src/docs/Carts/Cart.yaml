@@ -7,9 +7,15 @@ servers:
   - url: http://localhost:8080/api
     description: Development server
 
+tags:
+  - name: Cart
+    description: Operations related to carts
+
 paths:
   /cart:
     get:
+      tags:
+        - Cart
       summary: Retrieve all carts
       responses:
         "200":
@@ -22,6 +28,8 @@ paths:
                   $ref: "#/components/schemas/Cart"
 
     post:
+      tags:
+        - Cart
       summary: Create a new cart
       responses:
         "201":
@@ -33,6 +41,8 @@ paths:
 
   /cart/{cartId}/products:
     get:
+      tags:
+        - Cart
       summary: Retrieve all products in a specific cart
       parameters:
         - in: path
@@ -51,6 +61,8 @@ paths:
                   $ref: "#/components/schemas/CartProduct"
 
     post:
+      tags:
+        - Cart
       summary: Add a product to a specific cart
       parameters:
         - in: path
@@ -78,6 +90,8 @@ paths:
 
   /cart/{cartId}/products/{productId}:
     put:
+      tags:
+        - Cart
       summary: Update the quantity of a specific product in a cart
       parameters:
         - in: path
@@ -104,6 +118,8 @@ paths:
                 $ref: "#/components/schemas/Cart"
 
     delete:
+      tags:
+        - Cart
       summary: Remove a specific product from a cart
       parameters:
         - in: path
@@ -126,6 +142,8 @@ paths:
 
   /cart/{cartId}/clear:
     delete:
+      tags:
+        - Cart
       summary: Remove all products from a specific cart
       parameters:
         - in: path
@@ -143,6 +161,8 @@ paths:
 
   /cart/{cartId}/purchase:
     post:
+      tags:
+        - Cart
       summary: Purchase all products in a specific cart
       parameters:
         - in: path
@@ -169,6 +189,8 @@ paths:
 
   /cart/{cartId}:
     delete:
+      tags:
+        - Cart
       summary: Delete a specific cart
       parameters:
         - in: path

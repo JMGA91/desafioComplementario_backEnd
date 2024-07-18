@@ -62,17 +62,21 @@ router.get(
   }
 );
 
-// Route to switch user roles from common user to premium and vice versa
+// Route to switch user role to premium and vice versa
 router.get(
   "/premium/:uid",
   passport.authenticate("jwt", { session: false }),
-  auth("user"),
+  auth(["user", "premium"]),
   async (req, res) => {
     try {
       const user = await userControllerDB.findUserById(req.params.uid);
       const roles = ["user", "premium"];
 
-      if (req.user.user.role !== "user") {
+      // allow "user" or "premium" change roles
+      if (
+        req.user.user.role !== "user" &&
+        req.user.user.role !== "premium"
+      ) {
         return res.status(401).json({
           error: "Unauthorized",
           message: "You do not have permission to access this page.",
@@ -82,7 +86,7 @@ router.get(
       res.render("switchRole", {
         title: "Role Switcher",
         style: "index.css",
-        user: user.user,
+        user: user,
         role: roles,
       });
     } catch (error) {
@@ -101,11 +105,18 @@ router.put(
     try {
       const { uid } = req.params;
       const { role } = req.body;
-      console.log(`Updating role for user ${uid} to ${role}`); // Add this line
+      console.log(`Updating role for user ${uid} to ${role}`);
       const updatedUser = await userControllerDB.updateRole(uid, role);
-      res.status(200).json({ success: true, user: updatedUser });
+
+      // new token
+      const newToken = generateToken(updatedUser);
+      res.cookie("access_token", newToken);
+
+      res
+        .status(200)
+        .json({ success: true, user: updatedUser, token: newToken });
     } catch (error) {
-      console.error(`Error updating role: ${error.message}`); // Add this line
+      console.error(`Error updating role: ${error.message}`);
       res.status(500).json({ error: error.message });
     }
   }
