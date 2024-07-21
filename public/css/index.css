@@ -19,63 +19,6 @@
   transition: var(--transition);
 }
 
-/* Estilos para elementos específicos */
-hr {
-  width: 100%;
-  border: 1px solid var(--secondary-color);
-}
-
-h1, h3 {
-  text-align: center;
-  color: var(--secondary-color);
-}
-
-input, button, .button, .button-create, .button-delete, .next, .prev, .add-to-cart-button, .remove-item, .checkout-btn, .clear-cart-btn {
-  background-color: var(--background-color);
-  color: var(--primary-color);
-  border: 1px solid var(--secondary-color);
-  border-radius: var(--border-radius);
-}
-
-/* Estilos para botones y formularios */
-input {
-  background: var(--background-color);
-  color: var(--primary-color);
-  border: 1px solid var(--secondary-color);
-}
-
-button, .button, .button-create, .button-delete, .next, .prev, .add-to-cart-button, .remove-item, .checkout-btn, .clear-cart-btn {
-  cursor: pointer;
-  padding: 10px;
-  background-color: var(--secondary-color);
-  color: var(--background-color);
-  text-transform: uppercase;
-}
-
-.button:hover, .button-create:hover, .button-delete:hover, .remove-item:hover, .checkout-btn:hover, .clear-cart-btn:hover {
-  background-color: #b86f6f;
-  border: 1px solid var(--primary-color);
-}
-
-/* Estilos para cajas y contenedores */
-.box, .products-form, .product-card, .boxMessages, .cart, .register-container {
-  background-color: var(--box-background-color);
-  border: 1px solid var(--primary-color);
-  border-radius: var(--border-radius);
-  box-shadow: 0 0 10px var(--primary-color);
-}
-
-.box, .products-form, .register-container {
-  padding: 20px;
-}
-
-.product-card {
-  padding: 20px;
-  margin: 10px;
-  flex: 1 1 calc(25% - 20px);
-  max-width: calc(50% - 20px);
-}
-
 body {
   background: url('https://images.unsplash.com/photo-1518770660439-4636190af475') no-repeat center center fixed;
   background-size: cover;
@@ -84,23 +27,145 @@ body {
   text-align: center;
 }
 
-#messagesLogs {
-  overflow-y: scroll;
-  max-height: 200px;
+/* Estilos para encabezados */
+h1, h3 {
+  text-align: center;
+  color: var(--secondary-color);
 }
 
-.red {
-  color: red;
+/* Estilos para formularios */
+input, button {
+  background-color: var(--background-color);
+  color: var(--primary-color);
+  border: 1px solid var(--secondary-color);
+  border-radius: var(--border-radius);
+  padding: 10px;
+  margin-bottom: 10px;
 }
 
-.black {
-  color: black;
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea {
+  background: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  border-radius: 5px;
+  padding: 8px;
+  width: calc(100% - 20px);
 }
 
-.container {
-  max-width: 800px;
-  margin: 0 auto;
+button {
+  cursor: pointer;
+  background-color: var(--secondary-color);
+  color: var(--background-color);
+  text-transform: uppercase;
+  border: none;
+}
+
+button:hover {
+  background-color: #b86f6f;
+}
+
+/* Estilos para cajas y contenedores */
+.box, 
+.products-form, 
+.product-card, 
+.boxMessages, 
+.cart, 
+.register-container {
+  background-color: var(--box-background-color);
+  border: 1px solid var(--primary-color);
+  border-radius: var(--border-radius);
+  box-shadow: 0 0 10px var(--primary-color);
   padding: 20px;
+}
+
+.product-card {
+  margin: 10px;
+  flex: 1 1 calc(25% - 20px);
+  max-width: calc(50% - 20px);
+}
+
+/* Estilos específicos del formulario de registro */
+.register-container {
+  max-width: 400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.register-container h2 {
+  color: var(--secondary-color);
+}
+
+.register-form .form-group {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.register-form label {
+  color: var(--primary-color);
+}
+
+.register-form button.submit {
+  width: 100%;
+}
+
+.register-form button.submit:hover {
+  background-color: #b86f6f;
+}
+
+.login-link p {
+  margin-top: 15px;
+  color: var(--primary-color);
+}
+
+/* Estilos para botones específicos */
+.button:hover, 
+.button-create:hover, 
+.button-delete:hover, 
+.remove-item:hover, 
+.checkout-btn:hover, 
+.clear-cart-btn:hover {
+  background-color: #b86f6f;
+  border: 1px solid var(--primary-color);
+}
+
+#button-create, #button-delete {
+  background-color: #d78383;
+  color: #fff;
+  padding: 5px 10px;
+  margin-top: 10px;
+}
+
+#button-create:hover, #button-delete:hover {
+  background-color: #b86f6f;
+}
+
+/* Estilos adicionales para la tienda y el carrito */
+.products-box {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 1000px;
+  margin: auto;
+}
+
+.cart {
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  margin: 0 auto;
+  max-width: 800px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.cart-header {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .cart-item {
@@ -108,26 +173,20 @@ body {
   margin-bottom: 20px;
 }
 
-.item-image {
-  margin-right: 20px;
-}
-
 .item-image img {
   max-width: 100px;
   border-radius: 5px;
+  margin-right: 20px;
 }
 
 .item-details {
   flex: 1;
 }
 
-.item-name, .item-price {
+.item-name, 
+.item-price {
   color: var(--secondary-color);
   font-weight: bold;
-}
-
-.item-description, .item-quantity {
-  color: var(--primary-color);
 }
 
 .cart-total p {
@@ -135,11 +194,22 @@ body {
   color: var(--primary-color);
 }
 
-.cart-actions, .nav_list {
+.cart-actions {
   display: flex;
   justify-content: flex-end;
 }
 
+.add-to-cart-button {
+  background-color: #d78383;
+  color: #fff;
+  padding: 10px 20px;
+}
+
+.add-to-cart-button:hover {
+  background-color: #a54242;
+}
+
+/* Estilos para la navegación */
 .nav_list {
   list-style: none;
   padding: 0;
@@ -160,254 +230,26 @@ body {
   text-decoration: none;
 }
 
-/* Estilos específicos del formulario de registro */
-.register-container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid var(--primary-color);
-  border-radius: var(--border-radius);
-  background-color: var(--box-background-color);
-  box-shadow: 0 0 10px var(--primary-color);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.register-container h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: var(--secondary-color);
-}
-
-.register-form .form-group {
+hr {
   width: 100%;
-  margin-bottom: 15px;
+  border: 1px solid var(--secondary-color);
 }
 
-.register-form label {
-  display: block;
-  margin-bottom: 5px;
-  color: var(--primary-color);
+.red {
+  color: red;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="number"],
-textarea {
-  background: transparent;
-  color: var(--electric-blue);
-  border: 1px solid var(--electric-blue);
-  border-radius: 5px;
-  padding: 8px;
-  margin-bottom: 10px;
-  width: calc(100% - 20px);
+.black {
+  color: black;
 }
 
-.register-form button.submit {
-  width: 100%;
-  padding: 10px;
-  background-color: var(--secondary-color);
-  color: var(--background-color);
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.register-form button.submit:hover {
-  background-color: #b86f6f;
-}
-
-.login-link {
-  text-align: center;
-}
-
-.login-link p {
-  margin-top: 15px;
-  color: var(--primary-color);
-}
-
-.description {
-  text-align: center;
-  margin-bottom: 20px;
-  color: var(--primary-color);
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-  margin: 20px 0;
-  border: 2px solid var(--primary-color);
-}
-
-/* Estilos adicionales de index2.css */
-.products-box {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  width: 1000px;
-}
-
-.products-form form {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-}
-
-.products-form input {
-  margin-bottom: 5px;
-}
-
-#button-create, #button-delete {
-  background-color: #d78383;
-  color: #fff;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 3px;
-  cursor: pointer;
-  margin-top: 10px;
-  font-family: 'Montserrat', sans-serif;
-}
-
-#button-create:hover, #button-delete:hover {
-  background-color: #b86f6f;
-}
-
-.boxMessages {
-  margin-left: 10px;
-  margin-top: 2rem;
-}
-
-.box {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.item-actions {
-  display: flex;
-  align-items: center;
-}
-
-.remove-item {
-  padding: 5px 10px;
-  background-color: #d78383;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.remove-item:hover {
-  background-color: #b86f6f;
-}
-
-.checkout-btn, .clear-cart-btn {
-  padding: 10px 20px;
-  background-color: #d78383;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin-left: 10px;
-}
-
-.checkout-btn:hover, .clear-cart-btn:hover {
-  background-color: #b86f6f;
-}
-
-.next, .prev {
-  background-color: #d78383;
-  color: #fff;
-  border: none;
-  padding: 5px;
-  border-radius: 3px;
-  cursor: pointer;
-  margin-top: 10px;
-  font-family: 'Montserrat', sans-serif;
-  text-decoration: none;
-  text-align: center;
-  margin: 2rem;
-  width: 5rem;
-}
-
-.add-to-cart-button {
-  background-color: #d78383;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 3px;
-  cursor: pointer;
-  font-family: 'Montserrat', sans-serif;
-}
-
-.add-to-cart-button:hover {
-  background-color: #a54242;
-}
-
-.cart-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.cart-title {
-  color: #333;
-}
-
-.cart-items {
-  margin-bottom: 20px;
-}
-
-.item-name {
-  color: #333;
-  font-weight: bold;
-}
-
-.item-description {
-  color: #666;
-}
-
-.item-price {
-  color: #d78383;
-  font-weight: bold;
-}
-
-.item-quantity {
-  color: #666;
-}
-
-.cart-total {
-  text-align: right;
-  margin-bottom: 20px;
-}
-
-.cart-total p {
-  font-weight: bold;
-}
-
-.cart-actions {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.cart {
-  background-color: #fff;
-  border-radius: 5px;
-  padding: 20px;
-  margin: 0 auto;
+.container {
   max-width: 800px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+  padding: 20px;
 }
 
-.cart-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.cart-title {
-  color: #333;
+#messagesLogs {
+  overflow-y: scroll;
+  max-height: 200px;
 }
