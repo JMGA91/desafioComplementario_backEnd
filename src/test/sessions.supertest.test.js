@@ -22,7 +22,7 @@ const generateUsers = () => ({
 });
 
 const newUser = generateUsers();
-const isStudent = { email: "super@test.com", password: "test12345" };
+const isUser = { email: "super@test.com", password: "test12345" };
 
 before(async function () {
   this.timeout(10000);
@@ -39,7 +39,7 @@ describe("Testing users routes", () => {
   it("Login credentials", async () => {
     const response = await requester
       .post("/api/session/login")
-      .send(isStudent)
+      .send(isUser)
       .set("Accept", "application/json");
 
     expect(response.statusCode).to.equal(302);
