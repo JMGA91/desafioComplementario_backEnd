@@ -52,16 +52,14 @@ const initializePassport = () => {
       },
       async (_accessToken, _refreshToken, profile, done) => {
         try {
-          const email = profile._json.email || profile.profileUrl;
-          console.log("GitHub Profile:", profile);
-
-          let user = await userModel.findOne({ email });
-          console.log("Already an existing User:", user);
+          const email =
+            profile._json.email || `${profile._json.login}@github.com`;
+          const user = await userModel.findOne({ email }); // Check if user already exists
+          console.log("Existing User:", user);
 
           if (!user) {
             const newUser = {
               id: profile.id,
-              username: profile._json.login,
               firstName: profile._json.name,
               email: email,
               role: "user",

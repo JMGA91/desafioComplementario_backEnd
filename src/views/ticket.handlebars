@@ -1,11 +1,37 @@
-<html>
-  <body>
+
+  <div class="container">
     <div class="container">
-      <h1>Ticket Details</h1>
-      <p>Code: {{ticket.code}}</p>
-      <p>Purchase Date: {{ticket.purchaseDateTime}}</p>
-      <p>Amount: {{ticket.amount}}</p>
-      <p>Purchaser: {{ticket.purchaser}}</p>
-    </div>
-  </body>
-</html>
+  <nav>
+    <ul class="nav_list">
+      <li class="nav__item">
+        <a class="nav_link" href="/products">Products</a>
+      </li>
+      <li class="nav__item">
+        <a class="nav_link" href="/realtimeproducts">Post</a>
+      </li>
+      <li class="nav__item">
+        <a class="nav_link" href="/chat">Help!</a>
+      </li>
+      <li class="nav__item">
+        <a class="nav_link" href="/mockingproducts">Extras</a>
+      </li>
+      <li class="nav__item">
+        <a class="nav_link" href="/cart?cid={{user.cartId}}">Cart</a>
+      </li>
+      <li class="nav__item">
+        <a class="nav_link" href="/api/session/logout">Logout</a>
+      </li>
+    </ul>
+  </nav>
+
+    <h1>Ticket Details</h1>
+    <p>Code: {{code}}</p>
+    <p>Purchase Date: {{purchaseDateTime}}</p>
+    <p>Amount: {{amount}}</p>
+    <p>Purchaser: {{purchaser}}</p>
+     <img
+    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIkOuutJ3nR_JOaULABATC9TGciJHETKSJtQ&s"
+    alt="Thanks for your purchase"
+  />
+  </div>
+  

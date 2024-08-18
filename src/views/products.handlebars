@@ -2,7 +2,7 @@
   <nav>
     <ul class="nav_list">
       <li class="nav__item">
-        <a class="nav_link" href="/products/">Products</a>
+        <a class="nav_link" href="/products">Products</a>
       </li>
       <li class="nav__item">
         <a class="nav_link" href="/realtimeproducts">Post</a>
@@ -11,7 +11,7 @@
         <a class="nav_link" href="/chat">Help!</a>
       </li>
       <li class="nav__item">
-        <a class="nav_link" href="/mockingproducts">More</a>
+        <a class="nav_link" href="/mockingproducts">Extras</a>
       </li>
       <li class="nav__item">
         <a class="nav_link" href="/cart?cid={{user.cartId}}">Cart</a>
@@ -31,11 +31,35 @@
           <p>Categoria: {{this.category}}</p>
           <p>Descripción: {{this.description}}</p>
           <p>Precio: $ {{this.price}}</p>
+          <img
+    src="https://i.ebayimg.com/images/g/swoAAOSwCm9kEMTF/s-l1200.webp"
+    alt="Welcome Image"
+  />
+
+
+          <!-- Quantity Display -->
+          <span class="item-count" data-product-id="{{this._id}}">0</span>
+
+
+          <!-- Add to Cart Button -->
           <button
             data-product-id="{{this._id}}"
-            data-cart-id="{{../user.id}}"
+            data-cart-id="{{../cartId}}"
             class="add-to-cart-button"
-          >Add to Cart</button>
+          >
+            Add to Cart
+          </button>
+
+
+          <!-- Delete Product Button -->
+          <button
+            type="button"
+            class="delete-product-button"
+            data-product-id="{{this._id}}"
+            data-cart-id="{{../cartId}}"
+          >
+            Delete
+          </button>
         </div>
       {{/each}}
     </div>
@@ -49,5 +73,5 @@
     </div>
   </div>
 </div>
-
 <script src="/js/products.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

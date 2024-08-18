@@ -1,9 +1,8 @@
 <div class="container">
-
   <nav>
     <ul class="nav_list">
       <li class="nav__item">
-        <a class="nav_link" href="/products/">Products</a>
+        <a class="nav_link" href="/products">Products</a>
       </li>
       <li class="nav__item">
         <a class="nav_link" href="/realtimeproducts">Post</a>
@@ -12,7 +11,7 @@
         <a class="nav_link" href="/chat">Help!</a>
       </li>
       <li class="nav__item">
-        <a class="nav_link" href="/mockingproducts">More</a>
+        <a class="nav_link" href="/mockingproducts">Extras</a>
       </li>
       <li class="nav__item">
         <a class="nav_link" href="/cart?cid={{user.cartId}}">Cart</a>
@@ -24,36 +23,37 @@
   </nav>
 
   <div class="box">
-    <h1>Productos</h1>
+    <h1>Products</h1>
     <hr />
     <div class="products-form">
-      <h2>Crear Producto</h2>
+      <h2>Create Products</h2>
       <form>
-        <label for="title">Título</label>
+        <label for="title">Title</label>
         <input name="title" id="title" type="text" />
 
-        <label for="description">Descripción</label>
+        <label for="description">description</label>
         <input name="description" id="description" type="text" />
 
-        <label for="code">Código</label>
+        <label for="code">Code</label>
         <input name="code" id="code" type="text" />
 
-        <label for="price">Precio</label>
+        <label for="price">Price</label>
         <input name="price" id="price" type="number" />
 
         <label for="stock">Stock</label>
         <input name="stock" id="stock" type="number" />
 
-        <label for="category">Categoria</label>
+        <label for="category">Category</label>
         <input name="category" id="category" type="text" />
 
-        <button id="button-create" onclick="createProduct(event)">Crear</button>
+        <button
+          id="button-create"
+          onclick="createProduct(event)"
+        >Create</button>
       </form>
     </div>
 
     <hr />
-
-    <p>{{products.pagingCounter}}</p>
 
     <div class="products-box">
       {{#each products.docs}}
@@ -63,15 +63,34 @@
           <p>Categoria: {{this.category}}</p>
           <p>Descripción: {{this.description}}</p>
           <p>Precio: $ {{this.price}}</p>
+          <img
+            src="https://i.ebayimg.com/images/g/swoAAOSwCm9kEMTF/s-l1200.webp"
+            alt="Welcome Image"
+          />
           <button
             id="button-delete"
             onclick="deleteProduct('{{this._id}}')"
-          >Eliminar</button>
+          >Delete</button>
         </div>
       {{/each}}
     </div>
-  </div>
 
+    <div class="pagination">
+      {{#if products.hasPrevPage}}
+        <a
+          href="/realtimeproducts?page={{products.prevPage}}&limit={{products.limit}}"
+          class="prev"
+        >Previous</a>
+      {{/if}}
+      {{#if products.hasNextPage}}
+        <a
+          href="/realtimeproducts?page={{products.nextPage}}&limit={{products.limit}}"
+          class="next"
+        >Next</a>
+      {{/if}}
+    </div>
+  </div>
 </div>
 <script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/js/realtimeproducts.js"></script>

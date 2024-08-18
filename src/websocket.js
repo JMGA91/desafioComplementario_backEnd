@@ -23,8 +23,12 @@ export default (io) => {
 
     socket.on("deleteProduct", async (data) => {
       try {
-        const result = await ProductService.deleteProduct(data.pid);
-        socket.emit("publishProducts", result);
+        await ProductService.deleteProduct(data.pid);
+        const products = await ProductService.getAllProducts();
+        io.emit("productDeleted", {
+          message: "Product deleted successfully!",
+          products,
+        });
       } catch (error) {
         socket.emit("statusError", error.message);
       }

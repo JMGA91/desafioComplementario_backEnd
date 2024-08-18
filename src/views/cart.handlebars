@@ -2,7 +2,7 @@
   <nav>
     <ul class="nav_list">
       <li class="nav__item">
-        <a class="nav_link" href="/products/">Products</a>
+        <a class="nav_link" href="/products">Products</a>
       </li>
       <li class="nav__item">
         <a class="nav_link" href="/realtimeproducts">Post</a>
@@ -11,7 +11,7 @@
         <a class="nav_link" href="/chat">Help!</a>
       </li>
       <li class="nav__item">
-        <a class="nav_link" href="/mockingproducts">More</a>
+        <a class="nav_link" href="/mockingproducts">Extras</a>
       </li>
       <li class="nav__item">
         <a class="nav_link" href="/cart?cid={{user.cartId}}">Cart</a>
@@ -22,51 +22,38 @@
     </ul>
   </nav>
 
-
   <div class="cart">
     <div class="cart-header">
       <h2 class="cart-title">Your Cart</h2>
     </div>
     <div class="cart-items">
-      {{#each products}}
-        <div class="cart-item">
-          <div class="item-image">
-            <img src="{{this.product.image}}" alt="{{this.product.name}}" />
+      {{#if products.length}}
+        {{#each products}}
+          <div class="cart-item">
+            <div class="item-image">
+              <img src="{{this.product.image}}" alt="{{this.product.title}}" />
+            </div>
+            <div class="item-details">
+              <h3 class="item-name">{{this.product.title}}</h3>
+              <p class="item-description">{{this.product.description}}</p>
+              <p class="item-price">${{this.product.price}}</p>
+              <p class="item-quantity">Quantity: {{this.quantity}}</p>
+            </div>
+            <div class="item-actions">
+            </div>
           </div>
-          <div class="item-details">
-            <h3 class="item-name">{{this.product.name}}</h3>
-            <p class="item-description">{{this.product.description}}</p>
-            <p class="item-price">${{this.product.price}}</p>
-            <p class="item-quantity">Quantity: {{this.quantity}}</p>
-          </div>
-          <div class="item-actions">
-            <button
-              class="remove-item"
-              data-product-id="{{this.product._id}}"
-              data-cart-id="{{../cartId}}"
-            >Remove</button>
-          </div>
-        </div>
-      {{/each}}
-    </div>
-    <div class="cart-total">
-      <p>Total: ${{totalPrice}}</p>
+        {{/each}}
+      {{else}}
+        <p>Your cart is empty.</p>
+      {{/if}}
     </div>
     <div class="cart-actions">
       <button class="checkout-btn" data-cart-id="{{cartId}}">Checkout</button>
+
       <button class="clear-cart-btn" data-cart-id="{{cartId}}">Clear Cart</button>
-    </div>
-    <div class="paginate">
-      {{#if products.prevPage}}
-        <a href="/cart?page={{products.prevPage}}" class="prev">previous</a>
-      {{/if}}
-      {{#if products.nextPage}}
-        <a href="/cart?page={{products.nextPage}}" class="next">next</a>
-      {{/if}}
     </div>
   </div>
 </div>
 
-
-<script src="/socket.io/socket.io.js"></script>
 <script src="/js/cart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

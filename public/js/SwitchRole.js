@@ -1,4 +1,18 @@
 const form = document.getElementById("role-switch-form");
+const roleSelect = document.getElementById("role");
+const uploadButton = document.getElementById("document-upload-button");
+
+const rolesRequiringDocuments = ["premium"];
+
+roleSelect.addEventListener("change", (e) => {
+  const selectedRole = e.target.value;
+  if (rolesRequiringDocuments.includes(selectedRole)) {
+    uploadButton.style.display = "block";
+  } else {
+    uploadButton.style.display = "none";
+  }
+});
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const userId = document.getElementById("role").dataset.userId;
@@ -12,16 +26,34 @@ form.addEventListener("submit", async (e) => {
     if (response.ok) {
       Swal.fire({
         title: "Role updated successfully",
-        icon: "success",
+        imageUrl:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRR5-aktgHItDjLDmdPdsxCkN3jQCxA_YEMxg&s",
       });
+      if (rolesRequiringDocuments.includes(newRole)) {
+        uploadButton.style.display = "block";
+      } else {
+        uploadButton.style.display = "none";
+      }
     } else {
+      const errorResponse = await response.json();
       Swal.fire({
         title: "Error updating role",
-        text: "Please try again",
+        text:
+          errorResponse.error || "An error occurred while updating the role.",
         icon: "error",
       });
     }
   } catch (error) {
     console.error(error);
+    Swal.fire({
+      title: "Error updating role",
+      text: "An error occurred while updating the role. Please try again.",
+      icon: "error",
+    });
   }
+});
+
+uploadButton.addEventListener("click", () => {
+  const userId = document.getElementById("role").dataset.userId;
+  window.location.href = `/api/users/${userId}/documents`;
 });

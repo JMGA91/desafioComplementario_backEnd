@@ -58,6 +58,6 @@ socket.on("newUser", (data) => {
     text: `${data} has joined the chat`,
     toast: true,
     position: "top-right",
-    imageUrl: "https://flif.info/example-images/fish-lossy_1_1.webp.png",
+    imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRR5-aktgHItDjLDmdPdsxCkN3jQCxA_YEMxg&s",
   });
 });

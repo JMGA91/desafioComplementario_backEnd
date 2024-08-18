@@ -12,22 +12,6 @@ const userController = new UserController();
 const ticketController = new TicketController();
 const productController = new ProductController();
 
-router.get("/:cid", async (req, res) => {
-  try {
-    const result = await cartController.getProductsFromCartByID(req.params.cid);
-    res.send({
-      status: "success",
-      payload: result,
-    });
-  } catch (error) {
-    req.logger.warning("Cannot get Products from cart");
-    res.status(400).send({
-      status: "error",
-      message: error.message,
-    });
-  }
-});
-
 router.post("/", async (req, res) => {
   try {
     const result = await cartController.createCart();
@@ -106,7 +90,7 @@ router.post(
       // Info of the user authentication
       const user = req.user;
 
-      // Check if the user is premium and if they are the creator of the product
+      // Check if the user is premium and if they are the owner of the product
       if (user.role === "premium") {
         proceedWithCartUpdate = !(await checkOwnership(productId, email));
       }
@@ -210,31 +194,48 @@ router.get("/:cid", async (req, res) => {
   }
 });
 
+//took the idea from another project, it supose to be checking the route and TO FILL IN FOR POST BUT IT IS NOT working correctly 
+router.post("/:cid/purchase", async (req, res) => {
+  try {
+    const results = await cartController.getProductsFromCartByID(
+      req.params.cid
+    );
+
+    res.send({
+      status: "success",
+      payload: results,
+    });
+  } catch (error) {
+    req.logger.warning("Purchase Failed");
+    res.status(400).send({
+      status: "error",
+      message: error.message,
+    });
+  }
+});
+
 // POST /carts/:cid/purchase - Finalize the purchase process for a cart
-router.post(
+router.get(
   "/:cid/purchase",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    console.log("the user is", req.user);
     try {
-      // console.log("req.user:", req.user);
-      // Step 1: Get purchaser's email (assuming it's stored in req.user.email)
       const purchaser = req.user.user.email;
       const cartId = req.params.cid;
 
-      // Step 2: Purchase cart and get products that couldn't be processed
+      // Step 1: Process the cart and get processed items
       const { processed, notProcessed } = await cartController.purchaseCart(
         cartId
       );
 
-      // Step 3: Calculate total amount from the processed items in cart
+      // Step 2: Calculate the total amount
       const cart = await cartController.getProductsFromCartByID(cartId);
       let amount = 0;
       for (const cartProduct of cart.products) {
         amount += cartProduct.product.price * cartProduct.quantity;
       }
 
-      // Step 4: Create ticket for the purchase
+      // Step 3: Create the ticket
       const ticket = await ticketController.createTicket(
         purchaser,
         amount,
@@ -242,21 +243,18 @@ router.post(
         cartId
       );
 
-      console.log(purchaser);
-
-      // Step 5: Update cart with products that were not successfully processed
-      // await cartController.updateCartWithNotProcessed(cartId, notProcessed);
-
-      // Step 6: Send response
-      res.send({
-        status: "success",
-        payload: {
-          ticket,
-          notProcessed,
-        },
+      // Step 4: Render the ticket view
+      res.render("ticket", {
+        title: "FlameShop Purchase",
+        style: "index.css",
+        code: ticket.ticket.code,
+        purchaseDateTime: ticket.ticket.purchaseDateTime,
+        amount: ticket.ticket.amount,
+        purchaser: ticket.ticket.purchaser,
+        products: ticket.ticket.products,
       });
     } catch (error) {
-      console.error("Error en cartRouter ", error);
+      console.error("Error during checkout:", error);
       res.status(400).send({
         status: "error",
         message: error.message,

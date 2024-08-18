@@ -10,7 +10,22 @@ export default class CartDao {
   }
 
   async getById(cid) {
-    return await Cart.findById(cid).populate("products.product").lean();
+    console.log(`Fetching cart with ID: ${cid}`);
+
+    try {
+      const cart = await Cart.findById(cid).populate("products.product").lean();
+
+      console.log("Fetched cart:", cart);
+
+      if (!cart) {
+        console.warn(`Cart with ID ${cid} not found`);
+      }
+
+      return cart;
+    } catch (error) {
+      console.error("Error fetching cart by ID:", error);
+      throw new Error(`Error fetching cart with ID ${cid}`);
+    }
   }
 
   async addCart(cartId, productId, quantity) {
@@ -47,6 +62,8 @@ export default class CartDao {
     }
 
     await cart.save();
+
+    console.log("Updated cart:", cart);
     return cart;
   }
 

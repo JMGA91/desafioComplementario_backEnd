@@ -1,18 +1,18 @@
 <div class="container">
   <h1>Welcome to our shop online</h1>
   <div>
-    <p class="description">Please register to continue</p>
-    <div class="container">
-      
+    <p class="description">Please register to continue
+    </p>
     <!-- Login form -->
     <form class="box products-form" method="post" action="/api/session/login">
       <label for="email">Email</label>
       <input class="input" type="email" name="email" id="email" />
       <label for="password">Password</label>
       <input class="input" type="password" name="password" id="password" />
+      <a class="register" href="/recover">Recover your password</a>
       <button class="submit" type="submit">Login</button>
       <a class="register" href="/register" target="_self">Register</a>
-      <div class="d-flex gap-3 flex-column">
+      <div>
         <a href="/api/session/github">
           <svg
             xmlns="http://www.w3.org/2000/svg"

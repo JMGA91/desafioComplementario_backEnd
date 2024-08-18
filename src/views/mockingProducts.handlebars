@@ -2,16 +2,16 @@
   <nav>
     <ul class="nav_list">
       <li class="nav__item">
-        <a class="nav_link" href="/products/">Products</a>
+        <a class="nav_link" href="/products">Products</a>
       </li>
       <li class="nav__item">
         <a class="nav_link" href="/realtimeproducts">Post</a>
       </li>
       <li class="nav__item">
-        <a class="nav_link" href="/chat">Help!</a>
+        <a class="nav_link" href="/chat">Help</a>
       </li>
       <li class="nav__item">
-        <a class="nav_link" href="/mockingproducts">More</a>
+        <a class="nav_link" href="/mockingproducts">Extras</a>
       </li>
       <li class="nav__item">
         <a class="nav_link" href="/cart?cid={{user.cartId}}">Cart</a>
@@ -21,6 +21,7 @@
       </li>
     </ul>
   </nav>
+
   <div class="box">
     <h1>Mocking Products</h1>
     <div class="products-box">
@@ -31,6 +32,10 @@
           <p>Categoria: {{this.category}}</p>
           <p>Descripción: {{this.description}}</p>
           <p>Precio: $ {{this.price}}</p>
+          <img
+            src="https://i.ebayimg.com/images/g/swoAAOSwCm9kEMTF/s-l1200.webp"
+            alt="Welcome Image"
+          />
           <button data-product-id="{{this.id}}" class="add-to-cart-button">Add
             to Cart</button>
         </div>

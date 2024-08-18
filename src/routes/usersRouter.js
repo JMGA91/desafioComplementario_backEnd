@@ -3,9 +3,9 @@ import userController from "../controllers/userController.js";
 import { generateToken } from "../utils/utils.js";
 import passport from "passport";
 import { auth } from "../middlewares/auth.js";
+import { uploader } from "../utils/multerUtil.js";
 
 const router = Router();
-
 const userControllerDB = new userController();
 
 router.get("/", async (req, res) => {
@@ -15,34 +15,6 @@ router.get("/", async (req, res) => {
   } catch (error) {
     console.error(error);
   }
-});
-
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    req.session.failLogin = false;
-    const user = await userControllerDB.findUserEmail(email);
-    if (!user || password !== user.password) {
-      req.session.failLogin = true;
-      console.log("contraseña incorrecta");
-      return res.redirect("/login");
-    }
-    req.session.user = user;
-    const access_token = generateToken(user);
-    res.cookie("access_token", access_token).json("success", access_token);
-    // res.redirect("/user");
-  } catch (error) {
-    console.error("Error during login:", error);
-    req.session.failLogin = true;
-    res.redirect("/login");
-  }
-});
-
-router.get("/logout", (req, res) => {
-  req.session.destroy((error) => {
-    res.clearCookie("access_token");
-    res.redirect("/login");
-  });
 });
 
 const filterUserData = (user) => {
@@ -62,7 +34,7 @@ router.get(
   }
 );
 
-// Route to switch user role to premium and vice versa
+// Route to switch user role
 router.get(
   "/premium/:uid",
   passport.authenticate("jwt", { session: false }),
@@ -98,26 +70,147 @@ router.get(
   }
 );
 
+// Endpoint to render the documents view
+router.get(
+  "/:uid/documents",
+  passport.authenticate("jwt", { session: false }),
+  auth(["user", "premium"]),
+  async (req, res) => {
+    try {
+      const user = await userControllerDB.findUserById(req.params.uid);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      console.log("User data:", user);
+      res.render("documentsView", {
+        title: "Documents Uploader",
+        user: user,
+        style: "index.css",
+        userId: req.params.uid,
+      });
+    } catch (error) {
+      res.status(500).json({
+        error: "Error rendering documents view",
+        message: error.message,
+      });
+    }
+  }
+);
+
+router.post(
+  "/:uid/documents",
+  uploader.fields([
+    { name: "profileImage", maxCount: 1 },
+    { name: "productImage", maxCount: 1 },
+    { name: "idDocument", maxCount: 1 },
+    { name: "addressDocument", maxCount: 1 },
+    { name: "statementDocument", maxCount: 1 },
+  ]),
+  async (req, res) => {
+    try {
+      const userId = req.params.uid;
+      const files = req.files;
+
+      console.log("Received files:", files);
+      console.log("User ID:", userId);
+
+      // Fetch the user from the database
+      const user = await userControllerDB.findUserById(userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      let documents = [];
+      if (files.idDocument)
+        documents.push({
+          name: "ID Document",
+          reference: `/public/img/documents/${files.idDocument[0].filename}`,
+        });
+      if (files.addressDocument)
+        documents.push({
+          name: "Address Document",
+          reference: `/public/img/documents/${files.addressDocument[0].filename}`,
+        });
+      if (files.statementDocument)
+        documents.push({
+          name: "Bank Statement",
+          reference: `/public/img/documents/${files.statementDocument[0].filename}`,
+        });
+
+      // Update user's documents
+      await userControllerDB.updateUserDocuments(userId, documents);
+
+      res
+        .status(200)
+        .json({ message: "Documents uploaded successfully.", documents });
+    } catch (error) {
+      console.error(`Error updating documents: ${error.message}`);
+      res
+        .status(500)
+        .json({ error: "Error uploading documents", message: error.message });
+    }
+  }
+);
+
+// Updated endpoint to check documents before updating role to premium
 router.put(
   "/premium/:uid",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
-      const { uid } = req.params;
-      const { role } = req.body;
-      console.log(`Updating role for user ${uid} to ${role}`);
-      const updatedUser = await userControllerDB.updateRole(uid, role);
+      const userId = req.params.uid;
+      const user = await userControllerDB.findUserById(userId);
 
-      // new token
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const requiredDocs = [
+        "ID Document",
+        "Address Document",
+        "Bank Statement",
+      ];
+      const userDocs = user.documents.map((doc) => doc.name);
+
+      const hasAllDocs = requiredDocs.every((doc) => userDocs.includes(doc));
+
+      if (!hasAllDocs) {
+        return res
+          .status(400)
+          .json({ error: "User has not uploaded all the required documentation" });
+      }
+
+      const updatedUser = await userControllerDB.updateRole(userId, "premium");
       const newToken = generateToken(updatedUser);
-      res.cookie("access_token", newToken);
 
+      res.cookie("access_token", newToken);
       res
         .status(200)
         .json({ success: true, user: updatedUser, token: newToken });
     } catch (error) {
-      console.error(`Error updating role: ${error.message}`);
-      res.status(500).json({ error: error.message });
+      res
+        .status(500)
+        .json({ error: "Error updating role", message: error.message });
+    }
+  }
+);
+
+router.delete(
+  "/delete",
+  passport.authenticate("jwt", { session: false }),
+  auth("admin"),
+  async (req, res) => {
+    try {
+      const result = await userControllerDB.deleteUsers();
+      res.send({
+        status: "success",
+        payload: result,
+      });
+    } catch (error) {
+      res.status(400).send({
+        status: "error",
+        message: error.message,
+      });
     }
   }
 );

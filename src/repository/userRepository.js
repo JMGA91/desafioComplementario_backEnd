@@ -65,11 +65,27 @@ export default class UserRepository {
     return await this.userDao.updateRole(userId, newRole);
   }
 
+  async updateUserDocuments(userId, documents) {
+    try {
+      return await this.userDao.updateUserDocuments(userId, documents);
+    } catch (error) {
+      throw new Error("Error updating user documents: " + error.message);
+    }
+  }
+
   async deleteUserByEmail(userId) {
     try {
       return await this.userDao.deleteByEmail(userId);
     } catch (error) {
       throw new Error("Error deleting user: " + error.message);
+    }
+  }
+
+  async deleteUsers() {
+    try {
+      return await this.userDao.deleteUsers();
+    } catch (error) {
+      throw new Error("Error deleting users: " + error.message);
     }
   }
 }

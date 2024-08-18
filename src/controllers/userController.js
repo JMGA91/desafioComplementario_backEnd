@@ -83,9 +83,9 @@ export default class UserController {
       subject: "Password Recovery",
       html: `<div style="font-family: 'Montserrat', sans-serif; color: black;">
                     <h1>Change your password</h1>
-                     <p>We have received a request to reset your password. If you did not made this request, please ignore this email.</p>
+                     <p>We have received a request to reset your password. If you did not make this request, please ignore this email.</p>
                     <p>To reset your password, click the following link:</p>
-                    <p>This link will expire in 1 hour</p>
+                    <p>This link is valid for 1 hour</p>
                      <a href="http://localhost:8080/recover/${token}">
                     <button class="button">Reset Password</button>
                      </div>`,
@@ -97,11 +97,27 @@ export default class UserController {
     });
   }
 
-  async updateRole(uid, role) {
+  async updateUserDocuments(userId, documents) {
     try {
-      const updatedUser = await this.userService.updateRole(uid, role);
+      const user = await this.userService.updateUserDocuments(
+        userId,
+        documents
+      );
+      return user;
+    } catch (error) {
+      console.error("Error updating documents:", error);
+      throw new Error("Error updating documents: " + error.message);
+    }
+  }
+
+  async updateRole(userId, role) {
+    try {
+      const updatedUser = await this.userService.updateRole(userId, role);
+      if (!updatedUser) throw new Error("User not found");
+
       return updatedUser;
     } catch (error) {
+      console.error("Error updating role:", error);
       throw new Error("Error updating role: " + error.message);
     }
   }
@@ -109,6 +125,14 @@ export default class UserController {
   async deleteUserByEmail(userId) {
     try {
       return await this.userService.deleteUserByEmail(userId);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async deleteUsers(userId) {
+    try {
+      return await this.userService.deleteUsers(userId);
     } catch (error) {
       console.error(error);
     }

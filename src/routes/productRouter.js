@@ -8,6 +8,7 @@ import passport from "passport";
 import { auth } from "../middlewares/auth.js";
 import productModel from "../models/productModel.js";
 import { checkOwnership } from "../utils/checkOwnershipUtil.js";
+import { transport } from "../utils/mailUtil.js";
 
 const router = Router();
 const productController = new ProductController();
@@ -42,7 +43,7 @@ router.get("/", async (req, res) => {
 router.post(
   "/",
   passport.authenticate("jwt", { session: false }),
-  auth("admin", "premium"),
+  auth(["admin", "premium"]),
   uploader.array("thumbnails", 3),
   async (req, res) => {
     if (req.files) {
@@ -132,7 +133,7 @@ router.put("/:pid", uploader.array("thumbnails", 3), async (req, res) => {
 router.delete(
   "/:pid",
   passport.authenticate("jwt", { session: false }),
-  auth("admin", "premium"),
+  auth(["admin", "premium"]),
   async (req, res) => {
     try {
       const product = await productController.getProductByID(req.params.pid);
@@ -147,13 +148,44 @@ router.delete(
         });
       }
 
-      // Check if its a premiun or admin user
+      // Check if the user is either an admin or the owner of the product
       if (req.user.user.role === "premium") {
         proceedWithDelete = await checkOwnership(pid, email);
       }
 
       if (proceedWithDelete) {
         await productController.deleteProduct(pid);
+
+        // Notify the premium user
+        if (req.user.user.role === "premium") {
+          const mailOptions = {
+            from: "Juan Manuel <jmgaleman@gmail.com>",
+            to: email,
+            subject: "Product Deleted",
+            html: `<div>
+                      <h1>Product Deleted</h1>
+                      <p>Your product with ID ${pid} has been deleted.</p>
+                   </div>`,
+          };
+
+          transport.sendMail(mailOptions, (error, info) => {
+            if (error) {
+              console.error("Error sending email:", error);
+            } else {
+              console.log("Email sent:", info.response);
+              io.emit("emailSent", { message: "Email sent successfully!" });
+            }
+          });
+        }
+
+        // Fetch the updated product list
+        const products = await productController.getAllProducts();
+
+        io.emit("productDeleted", {
+          message: "Product deleted successfully!",
+          products,
+        });
+
         return res.status(200).send({
           status: "success",
           message: "Product erased",

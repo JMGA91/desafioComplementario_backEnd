@@ -57,7 +57,7 @@ router.get(
     try {
       const user = await userController.findUserById(req.user.user._id);
       res.render("user", {
-        title: "FlameShop | Usuario",
+        title: "FlameShop | User",
         style: "index.css",
         user,
         cart: [],
@@ -73,22 +73,31 @@ router.get(
 router.get(
   "/products",
   passport.authenticate("jwt", { session: false }),
-  auth("user"),
+  auth(["user", "premium"]),
   async (req, res) => {
     let { limit = 5, page = 1 } = req.query;
+    const cartId = req.user.user.cart;
+
+    console.log("Cart ID:", cartId); // Add this line for debugging
+
     try {
+      // Fetch user and products
       const user = await userController.findUserById(req.user.user._id);
       const products = await productController.getAllProducts(limit, page);
+
+      // Render products page
       res.render("products", {
-        title: "Productos",
+        title: "FlameShop | Products",
         style: "index.css",
         user,
         products,
+        cartId,
       });
     } catch (error) {
-      res.status(403).send({
+      console.error("Error fetching products:", error);
+      res.status(500).send({
         status: "error",
-        message: "Forbidden",
+        message: "Internal Server Error",
       });
     }
   }
@@ -98,14 +107,20 @@ router.get(
 router.get(
   "/realtimeproducts",
   passport.authenticate("jwt", { session: false }),
-  auth("admin"),
+  auth(["admin", "premium"]),
   async (req, res) => {
+    let { limit = 5, page = 1 } = req.query;
+    page = parseInt(page);
+    limit = parseInt(limit);
+
     try {
-      const products = await productController.getAllProducts();
+      const products = await productController.getAllProducts(limit, page);
       res.render("realTimeProducts", {
-        title: "Productos",
+        title: "FlameShop | Add Products",
         style: "index.css",
         products,
+        currentPage: page,
+        totalPages: products.totalPages,
       });
     } catch (error) {
       res.status(403).send({
@@ -120,7 +135,7 @@ router.get(
 router.get(
   "/chat",
   passport.authenticate("jwt", { session: false }),
-  auth("user"),
+  auth(["user", "premium"]),
   async (req, res) => {
     try {
       const messages = await messageController.getAllMessages();
@@ -136,24 +151,37 @@ router.get(
   }
 );
 
-// Cart route
 router.get(
   "/cart",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    let cartId = req.query.cid;
+    const cartId = req.user.user.cart;
+
     try {
       if (!cartId) {
-        const newCart = await cartController.createCart();
-        cartId = newCart._id;
-        return res.redirect(`/cart?cid=${cartId}`);
+        return res.status(400).send({
+          status: "error",
+          error: "Cart ID is required",
+        });
       }
+
+      // Fetch the cart details
       const cart = await cartController.getProductsFromCartByID(cartId);
+
+      if (!cart) {
+        return res.status(404).send({
+          status: "error",
+          error: "Cart not found",
+        });
+      }
+
+      // Render the cart page with the cart data
       res.render("cart", {
         title: "FlameShop Cart",
         style: "index.css",
         cartId,
-        products: cart.products || [],
+        products: cart.products,
+        cart,
         user: req.user,
       });
     } catch (error) {
@@ -287,7 +315,7 @@ router.post("/changePassword", async (req, res) => {
     if (isValidPassword(user, newPassword)) {
       return res
         .status(400)
-        .json({ error: "New password cannot be the same as old password" });
+        .json({ error: "New password cannot be the same as the old one" });
     }
 
     const hashedPassword = createHash(newPassword);

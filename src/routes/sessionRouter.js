@@ -3,7 +3,7 @@ import userController from "../controllers/userController.js";
 import passport from "passport";
 import { generateToken } from "../utils/utils.js";
 import { isValidPassword } from "../utils/functionUtil.js";
-
+// Policies
 import { auth } from "../middlewares/auth.js";
 import CartController from "../controllers/cartController.js";
 
@@ -25,16 +25,29 @@ sessionRouter.get("/users", async (_req, res) => {
 });
 
 sessionRouter.post("/register", async (req, res) => {
-  const response = await userControllerDB.registerUser(req.body);
-  const cart = await cartControllerDB.createCart();
-  console.log(cart);
-  const result = await userControllerDB.updateUser(response._id, cart._id);
+  try {
+    // Create the user
+    const response = await userControllerDB.registerUser(req.body);
 
-  res.render("login", {
-    title: "Flameshop | Login",
-    style: "index.css",
-    failLogin: req.session.failLogin ?? false,
-  });
+    // Create a cart
+    const cart = await cartControllerDB.createCart();
+
+    // Update the user with the cart ID
+    await userControllerDB.updateUser(response._id, { cart: cart._id });
+
+    // Render the login page
+    res.render("login", {
+      title: "FlameShop | Login",
+      style: "index.css",
+      failLogin: req.session.failLogin ?? false,
+    });
+  } catch (error) {
+    console.error("Error during registration:", error);
+    res.status(500).send({
+      status: "error",
+      message: "Internal Server Error",
+    });
+  }
 });
 
 sessionRouter.get("/failRegister", (_req, res) => {
@@ -45,16 +58,24 @@ sessionRouter.get("/failRegister", (_req, res) => {
 });
 
 sessionRouter.post("/login", async (req, res) => {
-  const user = await userControllerDB.findUserEmail(req.body.email);
-  if (!user || !isValidPassword(user, req.body.password)) {
-    return res.status(401).send({
+  try {
+    const user = await userControllerDB.findUserEmail(req.body.email);
+    if (!user || !isValidPassword(user, req.body.password)) {
+      return res.status(401).send({
+        status: "error",
+        message: "Error login!",
+      });
+    }
+    const token = generateToken(user);
+    res.cookie("auth", token, { maxAge: 60 * 60 * 1000, httpOnly: true });
+    res.redirect("/user");
+  } catch (error) {
+    console.error("Error during login:", error);
+    res.status(500).send({
       status: "error",
-      message: "Error login!",
+      message: "Internal Server Error",
     });
   }
-  const token = generateToken(user);
-  res.cookie("auth", token, { maxAge: 60 * 60 * 1000, httpOnly: true });
-  res.redirect(303, "/user");
 });
 
 sessionRouter.get("/failLogin", (_req, res) => {
@@ -100,6 +121,7 @@ sessionRouter.get(
   }
 );
 
+// Added
 sessionRouter.get(
   "/:uid",
   passport.authenticate("jwt", { session: false }),

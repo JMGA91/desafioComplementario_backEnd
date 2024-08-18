@@ -6,6 +6,7 @@ import { fakerES_MX } from "@faker-js/faker";
 import { startLogger } from "../utils/loggerUtil.js";
 import path from "path";
 
+// Load environment variables
 dotenv.config();
 const environment = process.env.NODE_ENV || "development";
 const envFile = environment === "production" ? "prod.env" : ".env";
@@ -21,7 +22,7 @@ const generateUsers = () => ({
 });
 
 const newUser = generateUsers();
-const isUser = { user: "user", password: "user12345" };
+const isStudent = { email: "super@test.com", password: "test12345" };
 
 before(async function () {
   this.timeout(10000);
@@ -35,19 +36,13 @@ before(async function () {
 });
 
 describe("Testing users routes", () => {
-  it("POST Login Operation for Users Endpoint", async () => {
+  it("Login credentials", async () => {
     const response = await requester
-      .post("/api/users/login")
-      .send(isUser)
+      .post("/api/session/login")
+      .send(isStudent)
       .set("Accept", "application/json");
 
-    if (response.statusCode === 302) {
-      const location = response.headers.location;
-      const followUpResponse = await requester.get(location);
-      expect(followUpResponse.statusCode).to.equal(200);
-    } else {
-      expect(response.statusCode).to.equal(200);
-    }
+    expect(response.statusCode).to.equal(302);
   });
 
   it("POST Register for Users Endpoint", async () => {
@@ -56,8 +51,8 @@ describe("Testing users routes", () => {
       .send(newUser)
       .set("Accept", "application/json");
 
-    //console.log("Register Response Status:", response.statusCode); 
-    //console.log("Register Response Body:", response.body); 
+    //console.log("Register Response Status:", response.statusCode); // Debugging log
+    //console.log("Register Response Body:", response.body); // Debugging log
 
     expect(response.statusCode).to.equal(200);
   });
