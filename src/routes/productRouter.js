@@ -1,5 +1,5 @@
 import { Router } from "express";
-import CustomError from "../services/errors/CustomError.js";
+import CustomError from "../services/errors/customError.js";
 import { generateProductsErrorInfo } from "../services/errors/info.js";
 import { ErrorCodes } from "../services/errors/enums.js";
 import ProductController from "../controllers/productController.js";
