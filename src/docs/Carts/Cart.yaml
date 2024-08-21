@@ -4,7 +4,7 @@ info:
   description: API for managing shopping carts, including CRUD operations and purchasing functionality.
   version: 1.0.0
 servers:
-  - url: http://localhost:8080/api
+  - url: https://desafiocomplementario-backend.onrender.com/api
     description: Development server
 
 tags:
