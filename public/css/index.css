@@ -7,6 +7,7 @@
   --background-color: #0d0d0d;
   --box-background-color: #1a1a1a;
   --font-family: 'Press Start 2P', cursive;
+  --alternative-font-family: 'Montserrat', sans-serif;
   --border-radius: 10px;
   --transition: all 0.3s ease;
 }
@@ -27,10 +28,10 @@ body {
   text-align: center;
 }
 
-/* Estilos para encabezados */
 h1, h3 {
   text-align: center;
   color: var(--secondary-color);
+  font-family: var(--alternative-font-family); /* Usa Montserrat para encabezados */
 }
 
 /* Estilos para formularios */
@@ -41,6 +42,7 @@ input, button {
   border-radius: var(--border-radius);
   padding: 10px;
   margin-bottom: 10px;
+  font-family: var(--alternative-font-family);
 }
 
 input[type="text"],
@@ -68,6 +70,11 @@ button:hover {
   background-color: #b86f6f;
 }
 
+hr {
+  width: 100%;
+  border: 1px solid var(--secondary-color);
+}
+
 /* Estilos para cajas y contenedores */
 .box, 
 .products-form, 
@@ -80,12 +87,37 @@ button:hover {
   border-radius: var(--border-radius);
   box-shadow: 0 0 10px var(--primary-color);
   padding: 20px;
+  font-family: var(--alternative-font-family);
 }
 
 .product-card {
   margin: 10px;
   flex: 1 1 calc(25% - 20px);
   max-width: calc(50% - 20px);
+}
+
+.boxMessages {
+  margin-top: 2rem;
+  margin-left: 10px;
+}
+
+.red {
+  color: #d78383;
+}
+
+.black {
+  color: #333;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+#messagesLogs {
+  overflow-y: scroll;
+  max-height: 200px;
 }
 
 /* Estilos específicos del formulario de registro */
@@ -95,6 +127,7 @@ button:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: var(--box-background-color);
 }
 
 .register-container h2 {
@@ -110,8 +143,13 @@ button:hover {
   color: var(--primary-color);
 }
 
+.register-form input {
+  font-family: var(--alternative-font-family);
+}
+
 .register-form button.submit {
   width: 100%;
+  font-family: var(--alternative-font-family);
 }
 
 .register-form button.submit:hover {
@@ -121,28 +159,6 @@ button:hover {
 .login-link p {
   margin-top: 15px;
   color: var(--primary-color);
-}
-
-/* Estilos para botones específicos */
-.button:hover, 
-.button-create:hover, 
-.button-delete:hover, 
-.remove-item:hover, 
-.checkout-btn:hover, 
-.clear-cart-btn:hover {
-  background-color: #b86f6f;
-  border: 1px solid var(--primary-color);
-}
-
-#button-create, #button-delete {
-  background-color: #d78383;
-  color: #fff;
-  padding: 5px 10px;
-  margin-top: 10px;
-}
-
-#button-create:hover, #button-delete:hover {
-  background-color: #b86f6f;
 }
 
 /* Estilos adicionales para la tienda y el carrito */
@@ -155,7 +171,7 @@ button:hover {
 }
 
 .cart {
-  background-color: #fff;
+  background-color: var(--box-background-color);
   border-radius: 5px;
   padding: 20px;
   margin: 0 auto;
@@ -183,7 +199,7 @@ button:hover {
   flex: 1;
 }
 
-.item-name, 
+.item-name,
 .item-price {
   color: var(--secondary-color);
   font-weight: bold;
@@ -199,13 +215,27 @@ button:hover {
   justify-content: flex-end;
 }
 
-.add-to-cart-button {
+.add-to-cart-button,
+.remove-item,
+.checkout-btn,
+.clear-cart-btn,
+.button-create,
+.button-delete {
   background-color: #d78383;
   color: #fff;
+  border: none;
   padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: var(--alternative-font-family);
 }
 
-.add-to-cart-button:hover {
+.add-to-cart-button:hover,
+.remove-item:hover,
+.checkout-btn:hover,
+.clear-cart-btn:hover,
+.button-create:hover,
+.button-delete:hover {
   background-color: #a54242;
 }
 
@@ -230,26 +260,6 @@ button:hover {
   text-decoration: none;
 }
 
-hr {
-  width: 100%;
-  border: 1px solid var(--secondary-color);
-}
-
-.red {
-  color: red;
-}
-
-.black {
-  color: black;
-}
-
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-#messagesLogs {
-  overflow-y: scroll;
-  max-height: 200px;
+.footer {
+  padding-bottom: 0.5rem;
 }
