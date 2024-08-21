@@ -20,8 +20,8 @@ import { addLogger, startLogger } from "./utils/loggerUtil.js";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUiExpress from "swagger-ui-express";
 
-//dotenv.config({ path: "./src/mongo.env" });
-dotenv.config();
+dotenv.config({ path: "./src/mongo.env" });
+//dotenv.config();
 
 const app = express();
 const uri = process.env.URI;
