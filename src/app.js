@@ -19,6 +19,8 @@ import cookieParser from "cookie-parser";
 import { addLogger, startLogger } from "./utils/loggerUtil.js";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUiExpress from "swagger-ui-express";
+import path from 'path';
+
 
 dotenv.config({ path: "./src/mongo.env" });
 //dotenv.config();
