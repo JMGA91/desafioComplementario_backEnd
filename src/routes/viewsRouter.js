@@ -107,7 +107,7 @@ router.get(
 router.get(
   "/realtimeproducts",
   passport.authenticate("jwt", { session: false }),
-  auth(["admin", "premium"]),
+  auth(["premium", "admin"]),
   async (req, res) => {
     let { limit = 5, page = 1 } = req.query;
     page = parseInt(page);
