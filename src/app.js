@@ -22,7 +22,7 @@ import swaggerUiExpress from "swagger-ui-express";
 import path from 'path';
 
 
-dotenv.config({ path: "./src/mongo.env" });
+//dotenv.config({ path: "./src/mongo.env" });
 //dotenv.config();
 
 const app = express();
