@@ -3,7 +3,8 @@ import { createHash, isValidPassword } from "../utils/functionUtil.js";
 import jwt from "jsonwebtoken";
 import { userModel } from "../models/userModel.js";
 import * as dotenv from "dotenv";
-dotenv.config();
+
+//dotenv.config();
 
 const secretKey = process.env.SECRET_KEY;
 
@@ -17,13 +18,16 @@ export default class UserService {
   }
 
   async registerUser(user) {
-    if (user.email === "admin@flameshop.com") {
-      user.password = createHash("admin12345");
-      user.role = "admin";
+    if (
+      user.email == "admin@flameshop.com" &&
+      isValidPassword(user, "admin12345")
+    ) {
+      const result = await this.userRepository.createUser(user);
+      result.role = "admin";
+      await result.save();
+      return result;
     }
-    
-    const result = await this.userRepository.createUser(user);
-    return result;
+    return await this.userRepository.createUser(user);
   }
 
   async loginUser(email, password) {
