@@ -135,7 +135,7 @@ router.get(
 router.get(
   "/chat",
   passport.authenticate("jwt", { session: false }),
-  auth(["user", "premium"]),
+  auth(["user", "premium", "admin"]),
   async (req, res) => {
     try {
       const messages = await messageController.getAllMessages();
