@@ -45,7 +45,7 @@ app.set("view engine", "handlebars");
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public"));
+app.use(express.static('public'));
 app.use("/js", express.static(__dirname + "/path/to/js"));
 app.use(cookieParser());
 
