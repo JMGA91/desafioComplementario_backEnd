@@ -23,7 +23,9 @@ import swaggerUiExpress from "swagger-ui-express";
 dotenv.config({ path: "./src/mongo.env" });
 //dotenv.config();
 
+const express = require('express');
 const app = express();
+
 const uri = process.env.URI;
 
 const conexion = async () => {
