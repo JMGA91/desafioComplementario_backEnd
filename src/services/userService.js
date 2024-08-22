@@ -1,7 +1,6 @@
 import UserRepository from "../repository/userRepository.js";
 import { createHash, isValidPassword } from "../utils/functionUtil.js";
 import jwt from "jsonwebtoken";
-import { userModel } from "../models/userModel.js";
 import * as dotenv from "dotenv";
 dotenv.config();
 
@@ -17,14 +16,17 @@ export default class UserService {
   }
 
   async registerUser(user) {
-    if (
-      user.email === "admin@flameshop.com" &&
-      isValidPassword(user, "admin12345")
-    ) {
-      user.role = "admin";
+    // Asignar rol de admin si el correo y la contraseña coinciden
+    if (user.email === "admin@flameshop.com" && user.password === "admin12345") {
+      user.role = "admin";  // Asigna el rol antes de crear el usuario
     }
+
+    // Hashear la contraseña antes de guardar
+    user.password = createHash(user.password);
     
+    // Crear el usuario con los datos actualizados
     const result = await this.userRepository.createUser(user);
+    
     return result;
   }
 
@@ -32,18 +34,15 @@ export default class UserService {
     if (!email || !password) {
       throw new Error("Invalid credentials!");
     }
-
     const user = await this.userRepository.findUserByEmail(email);
-    if (!user) throw new Error("User not found!");
+    if (!user) throw new Error("Invalid user!");
 
-    if (!isValidPassword(user, password)) {
+    if (isValidPassword(user, password)) {
+      const token = jwt.sign({ id: user._id, role: user.role }, secretKey, { expiresIn: "1h" });
+      return { token, user };
+    } else {
       throw new Error("Invalid Password!");
     }
-
-    const tokenPayload = { id: user._id, email: user.email, role: user.role };
-    const token = jwt.sign(tokenPayload, secretKey, { expiresIn: "1h" });
-
-    return { token, user };
   }
 
   async updateUser(userId, cartId) {
