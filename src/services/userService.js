@@ -18,30 +18,32 @@ export default class UserService {
 
   async registerUser(user) {
     if (
-      user.email == "admin@flameshop.com" &&
+      user.email === "admin@flameshop.com" &&
       isValidPassword(user, "admin12345")
     ) {
-      const result = await this.userRepository.createUser(user);
-      result.role = "admin";
-      await result.save();
-      return result;
+      user.role = "admin";
     }
-    return await this.userRepository.createUser(user);
+    
+    const result = await this.userRepository.createUser(user);
+    return result;
   }
 
   async loginUser(email, password) {
     if (!email || !password) {
       throw new Error("Invalid credentials!");
     }
-    const user = await this.userRepository.findUserByEmail(email);
-    if (!user) throw new Error("Invalid user!");
 
-    if (isValidPassword(user, password)) {
-      const token = jwt.sign(user, secretKey, { expiresIn: "1h" });
-      return { token, user };
-    } else {
+    const user = await this.userRepository.findUserByEmail(email);
+    if (!user) throw new Error("User not found!");
+
+    if (!isValidPassword(user, password)) {
       throw new Error("Invalid Password!");
     }
+
+    const tokenPayload = { id: user._id, email: user.email, role: user.role };
+    const token = jwt.sign(tokenPayload, secretKey, { expiresIn: "1h" });
+
+    return { token, user };
   }
 
   async updateUser(userId, cartId) {
@@ -57,7 +59,8 @@ export default class UserService {
   }
 
   async updatePassword(userId, newPassword) {
-    return await this.userRepository.updatePassword(userId, newPassword);
+    const hashedPassword = createHash(newPassword);
+    return await this.userRepository.updatePassword(userId, hashedPassword);
   }
 
   async getUserByToken(token) {
