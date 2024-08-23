@@ -1,28 +1,26 @@
-<body>
-  <div class="container">
-    <h1><span class="red">Switch</span><span class="black">Role</span></h1>
-    <p>Premium users are allowed to post and sell products!</p>
-    <img
-      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4q22HFqdUTjMMhRwpxMxKt1JP62NVxAV4dw&s"
-      alt="role"
-    />
-    <form id="role-switch-form">
-      <label for="role">Select new role:</label>
-      <select id="role" name="role" data-user-id="{{user._id}}">
-        {{#each role}}
-          <option value="{{this}}">{{this}}</option>
-        {{/each}}
-      </select>
+<div class="container">
+  <h1><span class="red">Switch</span><span class="black">Role</span></h1>
+  <p>Premium users are allowed to post and sell products!</p>
+  <img
+    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4q22HFqdUTjMMhRwpxMxKt1JP62NVxAV4dw&s"
+    alt="role"
+  />
+  <form id="role-switch-form">
+    <label for="role">Select new role:</label>
+    <select id="role" name="role" data-user-id="{{user._id}}">
+      {{#each role}}
+        <option value="{{this}}">{{this}}</option>
+      {{/each}}
+    </select>
 
-      <button class="button" type="submit">Update Role</button>
-    </form><button
-      id="document-upload-button"
-      class="button"
-      style="display: none;"
-    >Upload Products</button>
-    <a href="/user">Return to user account</a>
+    <button class="button" type="submit">Update Role</button>
+  </form><button
+    id="document-upload-button"
+    class="button"
+    style="display: none;"
+  >Upload Products</button>
+  <a href="/user">Return to user account</a>
 
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="/js/SwitchRole.js"></script>
-</body>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/SwitchRole.js"></script>

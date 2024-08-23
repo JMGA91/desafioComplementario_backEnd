@@ -92,7 +92,7 @@ export default class UserDao {
                     <h1>Your account has been closed due to inactivity.</h1>
                      <p>We have received a request to delete inactive accounts.</p>
                     <p>To create a new account click:</p>
-                    <button href="https://desafiocomplementario-backend.onrender.com/register" class="button">New Account</button>
+                    <button href="/register" class="button">New Account</button>
                      </div>`,
         };
 

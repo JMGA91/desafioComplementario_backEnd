@@ -18,10 +18,12 @@ socket.on("publishProducts", (data) => {
 });
 
 function updateProductList(data) {
+  const objectToLoop = (data.docs) ? data.docs : data;
+
   $(".products-box").innerHTML = "";
 
   let html = "";
-  data.docs.forEach((product) => {
+  objectToLoop.forEach((product) => {
     html += `<div class="product-card">
                 <h3>${product.title}</h3>
                 <hr>
@@ -48,6 +50,12 @@ function updateProductList(data) {
     }
   `;
   document.querySelector(".pagination").innerHTML = paginationHtml;
+
+  Swal.fire({
+    title: "Product uploaded successfully",
+    imageUrl:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRR5-aktgHItDjLDmdPdsxCkN3jQCxA_YEMxg&s",
+  });
 }
 
 function createProduct(event) {

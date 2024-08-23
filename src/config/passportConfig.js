@@ -48,7 +48,7 @@ const initializePassport = () => {
       {
         clientID: Client_Id,
         clientSecret: Secret_Id,
-        callbackURL: "https://desafiocomplementario-backend.onrender.com/api/session/githubcallback",
+        callbackURL: "/api/session/githubcallback",
       },
       async (_accessToken, _refreshToken, profile, done) => {
         try {

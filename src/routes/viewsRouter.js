@@ -20,7 +20,6 @@ const userController = new UserController();
 router.get("/", (req, res) => {
   res.render("home", {
     title: "FlameShop | Home",
-    style: "index.css",
   });
 });
 
@@ -31,7 +30,6 @@ router.get("/login", async (req, res) => {
   } else {
     res.render("login", {
       title: "FlameShop | Login",
-      style: "index.css",
       failLogin: req.session.failLogin ?? false,
     });
   }
@@ -44,7 +42,6 @@ router.get("/register", (req, res) => {
   }
   res.render("register", {
     title: "FlameShop | Register",
-    style: "index.css",
     failRegister: req.session.failRegister ?? false,
   });
 });
@@ -58,7 +55,6 @@ router.get(
       const user = await userController.findUserById(req.user.user._id);
       res.render("user", {
         title: "FlameShop | User",
-        style: "index.css",
         user,
         cart: [],
       });
@@ -73,7 +69,7 @@ router.get(
 router.get(
   "/products",
   passport.authenticate("jwt", { session: false }),
-  auth(["user", "premium"]),
+  auth(["user", "premium", "admin"]),
   async (req, res) => {
     let { limit = 5, page = 1 } = req.query;
     const cartId = req.user.user.cart;
@@ -88,7 +84,6 @@ router.get(
       // Render products page
       res.render("products", {
         title: "FlameShop | Products",
-        style: "index.css",
         user,
         products,
         cartId,
@@ -117,7 +112,6 @@ router.get(
       const products = await productController.getAllProducts(limit, page);
       res.render("realTimeProducts", {
         title: "FlameShop | Add Products",
-        style: "index.css",
         products,
         currentPage: page,
         totalPages: products.totalPages,
@@ -141,7 +135,6 @@ router.get(
       const messages = await messageController.getAllMessages();
       res.render("messageService", {
         title: "Chat",
-        style: "index.css",
         messages,
       });
     } catch (error) {
@@ -178,7 +171,6 @@ router.get(
       // Render the cart page with the cart data
       res.render("cart", {
         title: "FlameShop Cart",
-        style: "index.css",
         cartId,
         products: cart.products,
         cart,
@@ -195,7 +187,6 @@ router.get(
 router.get("/unauthorized", (req, res) => {
   res.status(401).render("unauthorized", {
     title: "Unauthorized",
-    style: "index.css",
   });
 });
 
@@ -214,7 +205,6 @@ router.get("/mockingproducts", (req, res) => {
 
   res.render("mockingProducts", {
     title: "Mocking Products",
-    style: "index.css",
     products: currentProducts,
     prevPage,
     nextPage,
@@ -258,7 +248,6 @@ router.get("/send/mail", async (req, res) => {
 router.get("/recover", (_req, res) => {
   res.render("recoverView", {
     title: "Recover email",
-    style: "index.css",
   });
 });
 
@@ -271,7 +260,6 @@ router.get("/recover/:token", async (req, res) => {
     }
     res.render("changePasswordView", {
       title: "Change Password View",
-      style: "index.css",
       user,
       token,
     });
@@ -293,7 +281,6 @@ router.post("/recover", async (req, res) => {
     console.log(result);
     res.render("emailSent", {
       title: "Email Sent",
-      style: "index.css",
       message: "Check your email for password recovery instructions",
     });
   } catch (error) {
@@ -333,7 +320,6 @@ router.post("/changePassword", async (req, res) => {
 router.get("/email-sent", (req, res) => {
   res.render("emailSent", {
     title: "Email Sent",
-    style: "index.css",
   });
 });
 
