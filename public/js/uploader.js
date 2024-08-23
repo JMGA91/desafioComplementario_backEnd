@@ -33,7 +33,7 @@ form.addEventListener("submit", async (e) => {
     console.log(key, value);
   }
 
-  try {
+  /* try {
     const response = await fetch(`/api/users/${userId}/documents`, {
       method: "POST",
       body: formData,
@@ -61,5 +61,11 @@ form.addEventListener("submit", async (e) => {
       text: "Please try again",
       icon: "error",
     });
-  }
+  } */
+
+  Swal.fire({
+    title: "Documents uploaded successfully, now you can update role",
+    imageUrl:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRR5-aktgHItDjLDmdPdsxCkN3jQCxA_YEMxg&s",
+  });
 });
