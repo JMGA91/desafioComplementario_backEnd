@@ -165,7 +165,7 @@ router.put(
         return res.status(404).json({ error: "User not found" });
       }
 
-      const requiredDocs = [
+      /* const requiredDocs = [
         "ID Document",
         "Address Document",
         "Bank Statement",
@@ -175,6 +175,12 @@ router.put(
       const hasAllDocs = requiredDocs.every((doc) => userDocs.includes(doc));
 
       if (!hasAllDocs) {
+        return res
+          .status(400)
+          .json({ error: "User has not uploaded all the required documentation" });
+      } */
+
+      if (!localStorage.getItem("documentsUploaded")) {
         return res
           .status(400)
           .json({ error: "User has not uploaded all the required documentation" });

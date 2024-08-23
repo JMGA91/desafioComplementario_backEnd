@@ -68,4 +68,6 @@ form.addEventListener("submit", async (e) => {
     imageUrl:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRR5-aktgHItDjLDmdPdsxCkN3jQCxA_YEMxg&s",
   });
+
+  localStorage.setItem("documentsUploaded", "true");
 });
